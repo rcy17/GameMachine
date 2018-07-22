@@ -1,13 +1,13 @@
-#ifndef ARDUINO
+
 #include"PlayerOwnedGames.h"
 #include"State.h"
 #include"Player.h"
 #include"Compatible.h"
-#endif
 
 
 
-#ifdef WINDOWS_SYSTEM
+
+#ifdef WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -25,15 +25,15 @@ CGobang* CGobang::Instance()
 void CGobang::Enter(CPlayer*player)
 {	
 
-	memset(m_ggiPrint, BLANK, sizeof(m_ggiPrint));
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrintSave));
+	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrintSave));
 	m_bOver = false;
 	m_bWin = false;
 	m_bWhiteGo = false;
 	//m_iTurn = 0;
 	m_HighLight = CPosition(iXEDGE / 2, iYEDGE / 2);
 	m_iBlankRest = iXEDGE * iYEDGE;
-	m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = HIGHLIGHT;
+	g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = HIGHLIGHT;
 	CLS;
 	Refresh();
 }
@@ -78,10 +78,10 @@ void CGobang::Execute(CPlayer*player)
 				break;
 			case RESET:
 			case RESTART:
-				player->ChangeState(GOBANG);
+				player->ChangeState(CGobang::Instance());
 				return;
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
 				break;
 
 			}
@@ -100,10 +100,10 @@ void CGobang::Execute(CPlayer*player)
 		{
 		case RESET:
 		case RESTART:
-			player->ChangeState(GOBANG);
+			player->ChangeState(CGobang::Instance());
 			break;
 		case EXIT:
-			player->ChangeState(NONE);
+			player->ChangeState(CMain::Instance());
 			break;
 		}
 	}
@@ -126,16 +126,16 @@ CGobang::CGobang()
 bool CGobang::GoCheck()
 {
 	m_HighLight.Safetify();
-	return m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] == BLANK ||
-		m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] == HIGHLIGHT;
+	return g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] == BLANK ||
+		g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] == HIGHLIGHT;
 
 }
 
 void CGobang::JudgeOver()
 {
 	item Now = GetItem();
-	if (m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] != HIGHLIGHT) return;
-	m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = Now;
+	if (g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] != HIGHLIGHT) return;
+	g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = Now;
 	m_iBlankRest--;
 	if (CountChess(Now, UP, DOWN) >= 5 || CountChess(Now, RIGHT, LEFT) >= 5 ||
 		CountChess(Now, RIGHTUP, LEFTDOWN) >= 5 || CountChess(Now, LEFTUP, RIGHTDOWN) >= 5)
@@ -157,7 +157,7 @@ void CGobang::JudgeOver()
 	for (int i = 0; i < iYEDGE; i++)
 		for (int j = 0; j < iXEDGE; j++)
 		{
-			if (m_ggiPrint[i][j] == BLANK)
+			if (g_ggcPrint[i][j] == BLANK)
 				random--;
 			if (!random)
 			{
@@ -176,13 +176,13 @@ int CGobang::CountChess(const item &Now, const keyin &Direction1, const keyin &D
 {
 	int Count = 0;
 	CPosition tem = m_HighLight.Move(Direction1);
-	while (tem.SafeCheck() && m_ggiPrint[tem.Get_Y()][tem.Get_X()] == Now)
+	while (tem.SafeCheck() && g_ggcPrint[tem.Get_Y()][tem.Get_X()] == Now)
 	{
 		Count++;
 		tem.Move(Direction1);
 	}
 	tem = m_HighLight.Move(Direction2);
-	while (tem.SafeCheck() && m_ggiPrint[tem.Get_Y()][tem.Get_X()] == Now)
+	while (tem.SafeCheck() && g_ggcPrint[tem.Get_Y()][tem.Get_X()] == Now)
 	{
 		Count++;
 		tem.Move(Direction2);
@@ -192,38 +192,38 @@ int CGobang::CountChess(const item &Now, const keyin &Direction1, const keyin &D
 
 void CGobang::Refresh()
 {
-	//memset(m_ggiPrint, BLANK, sizeof(m_ggiPrint));
+	//memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
 	if (m_HighLight != m_HighLightBefore)
 	{
-		switch (m_ggiPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()])
+		switch (g_ggcPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()])
 		{
 		case BLACKHIGHLIGHT:
-			m_ggiPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = BLACKCHESS;
+			g_ggcPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = BLACKCHESS;
 			break;
 		case WHITEHIGHLIGHT:
-			m_ggiPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = WHITECHESS;
+			g_ggcPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = WHITECHESS;
 			break;
 		case HIGHLIGHT:
-			m_ggiPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = BLANK;
+			g_ggcPrint[m_HighLightBefore.Get_Y()][m_HighLightBefore.Get_X()] = BLANK;
 			break;
 		default:
 			break;
 		}
-		switch (m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()])
+		switch (g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()])
 		{
 		case BLACKCHESS:
-			m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = BLACKHIGHLIGHT;
+			g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = BLACKHIGHLIGHT;
 			break;
 		case WHITECHESS:
-			m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = WHITEHIGHLIGHT;
+			g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = WHITEHIGHLIGHT;
 			break;
 		case BLANK:
-			m_ggiPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = HIGHLIGHT;
+			g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = HIGHLIGHT;
 			break;
 		default:
 			break;
 		}
 	}
-	Print(GOBANG, m_ggiPrint, m_ggiPrintSave);
-	memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+	Print(GOBANG, g_ggcPrint, g_ggcPrintSave);
+	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }

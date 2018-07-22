@@ -1,7 +1,6 @@
-#ifndef ARDUINO
 #pragma once
 #include"Compatible.h"
-#endif
+
 class CPosition
 {
 public:

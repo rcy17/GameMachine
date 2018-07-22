@@ -1,18 +1,18 @@
-#ifndef ARDUINO
+
 #include"PlayerOwnedGames.h"
 #include"Player.h"
 #include"Compatible.h"
-#endif
 
 
-#ifdef WINDOWS_SYSTEM
+
+#ifdef WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
 using std::cout;
 #endif
 
-CP_GLOBALSTATE char sg_cMap[7][16][32] =
+ char sg_cMap[7][16][32] =
 {
 	{
 		{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
@@ -48,7 +48,7 @@ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLA
 { BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK ,
 BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK }
 	},
-	//CP_GLOBALSTATE char sg_cMap2[16][32] =
+
 {
 	{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK ,
 	BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK },
@@ -83,7 +83,7 @@ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLA
 { BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK }
 },
-//CP_GLOBALSTATE char sg_cMap3[16][32] =
+
 {
 	{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK ,
 	BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK },
@@ -116,7 +116,7 @@ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLA
 { BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK }
 },
-//CP_GLOBALSTATE char sg_cMap4[16][32] =
+
 {
 	{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 	BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK },
@@ -151,7 +151,7 @@ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLA
 { BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK }
 },
-//CP_GLOBALSTATE char sg_cMap5[16][32] =
+
 {
 	{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK ,
 	BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK },
@@ -186,7 +186,7 @@ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLA
 { BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK }
 },
-//CP_GLOBALSTATE char sg_cMap6[16][32] =
+
 {
 	{ BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK,
 	BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK, BLANK },
@@ -274,8 +274,8 @@ void CSokoban::Enter(CPlayer*player)
 {
 	CLS;
 	level = 0;
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrint));
-	memcpy(m_ggiPrint, CP_GLOBAL(sg_cMap[level]), sizeof(m_ggiPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrint));
+	memcpy(g_ggcPrint, sg_cMap[level], sizeof(g_ggcPrint));
 	person = CPosition(7, 8);
 
 }
@@ -304,7 +304,7 @@ void CSokoban::Execute(CPlayer*player)
 			Move(tem);
 			break;
 		case EXIT:
-			player->ChangeState(NONE);
+			player->ChangeState(CMain::Instance());
 			break;
 		case NEXT:
 			SetMap(++level);
@@ -321,8 +321,8 @@ void CSokoban::Execute(CPlayer*player)
 
 
 
-	Print(SOKOBAN, m_ggiPrint, m_ggiPrintSave);
-	memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+	Print(SOKOBAN, g_ggcPrint, g_ggcPrintSave);
+	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 
 	if (win())
 	{
@@ -345,7 +345,7 @@ bool CSokoban::win()
 	{
 		for (int j = 0; j < 16; j++)
 		{
-			if (m_ggiPrint[i][j] == AIM || m_ggiPrint[i][j] == PERSON_AIM)
+			if (g_ggcPrint[i][j] == AIM || g_ggcPrint[i][j] == PERSON_AIM)
 			{
 				return 0;
 			}
@@ -390,10 +390,10 @@ void CSokoban::SetMap(unsigned char& level)
 		level = 0;
 		break;
 	}
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrint));
-	memcpy(m_ggiPrint, CP_GLOBAL(sg_cMap[level]), sizeof(m_ggiPrint));
-	Print(SOKOBAN, m_ggiPrint, m_ggiPrintSave);
-	memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrint));
+	memcpy(g_ggcPrint, sg_cMap[level], sizeof(g_ggcPrint));
+	Print(SOKOBAN, g_ggcPrint, g_ggcPrintSave);
+	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 	CP_SLEEP(100);
 }
 
@@ -401,35 +401,35 @@ void CSokoban::Move(keyin &dir)
 {
 	person.Move(dir, next);
 	next.Move(dir, next2);
-	if (m_ggiPrint[next.Get_Y()][next.Get_X()] == PATH)
+	if (g_ggcPrint[next.Get_Y()][next.Get_X()] == PATH)
 	{
-		m_ggiPrint[person.Get_Y()][person.Get_X()] -= 2;   //from person(2) to blank(0)
-		m_ggiPrint[next.Get_Y()][next.Get_X()] += 2;       //form blank(0) to person(2)
+		g_ggcPrint[person.Get_Y()][person.Get_X()] -= 2;   //from person(2) to blank(0)
+		g_ggcPrint[next.Get_Y()][next.Get_X()] += 2;       //form blank(0) to person(2)
 		person.Move(dir);
 	}
-	else if (m_ggiPrint[next.Get_Y()][next.Get_X()] == BOX)
+	else if (g_ggcPrint[next.Get_Y()][next.Get_X()] == BOX)
 	{
-		if (m_ggiPrint[next2.Get_Y()][next2.Get_X()] == PATH || m_ggiPrint[next2.Get_Y()][next2.Get_X()] == AIM)
+		if (g_ggcPrint[next2.Get_Y()][next2.Get_X()] == PATH || g_ggcPrint[next2.Get_Y()][next2.Get_X()] == AIM)
 		{
-			m_ggiPrint[person.Get_Y()][person.Get_X()] -= 2;
-			m_ggiPrint[next.Get_Y()][next.Get_X()] = PERSON;
-			m_ggiPrint[next2.Get_Y()][next2.Get_X()] += 3;
+			g_ggcPrint[person.Get_Y()][person.Get_X()] -= 2;
+			g_ggcPrint[next.Get_Y()][next.Get_X()] = PERSON;
+			g_ggcPrint[next2.Get_Y()][next2.Get_X()] += 3;
 			person.Move(dir);
 		}
 	}
-	else if (m_ggiPrint[next.Get_Y()][next.Get_X()] == AIM)
+	else if (g_ggcPrint[next.Get_Y()][next.Get_X()] == AIM)
 	{
-		m_ggiPrint[person.Get_Y()][person.Get_X()] -= 2;
-		m_ggiPrint[next.Get_Y()][next.Get_X()] = PERSON_AIM;
+		g_ggcPrint[person.Get_Y()][person.Get_X()] -= 2;
+		g_ggcPrint[next.Get_Y()][next.Get_X()] = PERSON_AIM;
 		person.Move(dir);
 	}
-	else if (m_ggiPrint[next.Get_Y()][next.Get_X()] == BOX_AIM)
+	else if (g_ggcPrint[next.Get_Y()][next.Get_X()] == BOX_AIM)
 	{
-		if (m_ggiPrint[next2.Get_Y()][next2.Get_X()] == PATH || m_ggiPrint[next2.Get_Y()][next2.Get_X()] == AIM)
+		if (g_ggcPrint[next2.Get_Y()][next2.Get_X()] == PATH || g_ggcPrint[next2.Get_Y()][next2.Get_X()] == AIM)
 		{
-			m_ggiPrint[person.Get_Y()][person.Get_X()] -= 2;
-			m_ggiPrint[next.Get_Y()][next.Get_X()] = PERSON_AIM;
-			m_ggiPrint[next2.Get_Y()][next2.Get_X()] += 3;
+			g_ggcPrint[person.Get_Y()][person.Get_X()] -= 2;
+			g_ggcPrint[next.Get_Y()][next.Get_X()] = PERSON_AIM;
+			g_ggcPrint[next2.Get_Y()][next2.Get_X()] += 3;
 			person.Move(dir);
 		}
 	}

@@ -1,18 +1,20 @@
-#ifndef ARDUINO
+
 #include"PlayerOwnedGames.h"
 #include"State.h"
 #include"Player.h"
 #include"Compatible.h"
-#endif
 
 
 
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 #include<conio.h>
 #include<iostream>
 #pragma warning(disable:4996)
 using std::cout;
 #endif
+
+unsigned char g_ggcPrint[16][32];
+unsigned char g_ggcPrintSave[16][32];
 
 /************** methods for CMain ***************************/
 CMain* CMain::Instance()
@@ -24,11 +26,8 @@ CMain* CMain::Instance()
 void CMain::Enter(CPlayer*player)
 {
 	CLS;
-	//MusicManage(NOMUSIC);
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 	cout << "Back to Main Menu!\n";
-#else
-	print_backtomenu();
 #endif
 	HighLightGame = RETROSNAKE;
 	HighLightGameSave = NONE;
@@ -37,35 +36,14 @@ void CMain::Enter(CPlayer*player)
 
 void CMain::Execute(CPlayer*player)
 {
-	//MusicManage(BGM);
 	if (HighLightGame != HighLightGameSave)
 	{
 
 
 		CLS;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 		cout << "Choose the game:\n1.RetroSnake\n2.Gobang\n3.Tetris\n4.Sokoban\n";
 		cout << "The highlight one is:" << HighLightGame;
-#else 
-		switch (HighLightGame)
-		{
-		case RETROSNAKE:
-			print_retrosnake();
-			break;
-		case GOBANG:
-			print_gobang();
-			
-			break;
-		case TETRIS:
-			print_tetris();
-			break;
-		case SOKOBAN:
-			print_sokoban();
-			break;
-		case STARTREK:
-			print_startrek();
-			break;
-	}
 #endif
 		HighLightGameSave = HighLightGame;
 	}
@@ -89,7 +67,7 @@ void CMain::Execute(CPlayer*player)
 		break;
 	case OK:
 	case START:
-		player->ChangeState(HighLightGame);
+		player->ChangeState(GetInstance(HighLightGame));
 	default:
 		break;
 	}
@@ -97,7 +75,7 @@ void CMain::Execute(CPlayer*player)
 
 void CMain::Exit(CPlayer*player)
 {
-	//MusicManage(NOMUSIC);
+	
 }
 
 

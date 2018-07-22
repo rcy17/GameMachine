@@ -1,12 +1,12 @@
-#ifndef ARDUINO
+
 #include"PlayerOwnedGames.h"
 #include"Player.h"
 #include"Compatible.h"
-#endif
 
 
 
-#ifdef WINDOWS_SYSTEM
+
+#ifdef WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -46,7 +46,7 @@ void CRetroSnake::Enter(CPlayer*player)
 
 
 	CLS;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 	cout << "Welcome to RestroSnake!\n";
 	system("cls");
 	cout << "      options:\n";
@@ -54,23 +54,6 @@ void CRetroSnake::Enter(CPlayer*player)
 	cout << "wall         " << (m_cWall ? "on" : "off") << "\n";
 	cout << "levelup      " << (m_cLevelup ? "on" : "off") << "\n";
 	cout << "PC2          " << (m_cDouble ? "on" : "off") << "\n";
-#else
-	CLS;
-	switch (HighLightOption)
-	{
-	case SPEED:
-		print_speed(m_cSpeed);
-		break;
-	case WALL:
-		print_wall(m_cWall);
-		break;
-	case LEVELUP:
-		print_levelup(m_cLevelup);
-		break;
-	case DOUBLEPLAYER:
-		print_double(m_cDouble);
-		break;
-	}
 #endif
 	//CP_SLEEP(1000);
 }
@@ -90,7 +73,7 @@ void CRetroSnake::Execute(CPlayer*player)
 	}
 #endif 
 	if (m_bExit)
-		player->ChangeState(NONE);
+		player->ChangeState(CMain::Instance());
 	if (m_bStart)
 	{
 		if (m_bChangeFlag)
@@ -100,7 +83,7 @@ void CRetroSnake::Execute(CPlayer*player)
 		}
 		Run();
 		if (m_bReset)
-			player->ChangeState(RETROSNAKE);
+			player->ChangeState(CRetroSnake::Instance());
 
 	}
 	else
@@ -112,29 +95,12 @@ void CRetroSnake::Execute(CPlayer*player)
 			RetroSnakeOptionsCheck();
 			m_bChangeFlag = false;
 			CLS;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 			cout << "      options:\n";
 			cout << "speed        " << (int)m_cSpeed << "\n";
 			cout << "wall         " << (m_cWall ? "on" : "off") << "\n";
 			cout << "levelup      " << (m_cLevelup ? "on" : "off") << "\n";
 			cout << "PC2          " << (m_cDouble ? "on" : "off") << "\n";
-#else
-			CLS;
-			switch (HighLightOption)
-			{
-			case SPEED:
-				print_speed(m_cSpeed);
-				break;
-			case WALL:
-				print_wall(m_cWall);
-				break;
-			case LEVELUP:
-				print_levelup(m_cLevelup);
-				break;
-			case DOUBLEPLAYER:
-				print_double(m_cDouble);
-				break;
-			}
 #endif
 		}
 
@@ -169,7 +135,8 @@ void CRetroSnake::Execute(CPlayer*player)
 				m_bStart = true;
 				break;
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
+				return;
 			default:
 				break;
 			}
@@ -440,13 +407,13 @@ void CRetroSnake::Move(bool snake)
 				for (int i = 0; i < iYEDGE; i++)
 					for (int j = 0; j < iXEDGE; j++)
 					{
-						if (m_ggiPrint[i][j] >= SNAKE2)
-							m_ggiPrint[i][j]--;
-						if (m_ggiPrint[i][j] == SNAKE2)
-							m_ggiPrint[i][j] = BLANK;
+						if (g_ggcPrint[i][j] >= SNAKE2)
+							g_ggcPrint[i][j]--;
+						if (g_ggcPrint[i][j] == SNAKE2)
+							g_ggcPrint[i][j] = BLANK;
 					}
 			}
-			m_ggiPrint[m_Snake2.Get_Y()][m_Snake2.Get_X()] = m_iLength2 + SNAKE2;
+			g_ggcPrint[m_Snake2.Get_Y()][m_Snake2.Get_X()] = m_iLength2 + SNAKE2;
 		}
 		else
 		{
@@ -478,13 +445,13 @@ void CRetroSnake::Move(bool snake)
 			for (int i = 0; i < iYEDGE; i++)
 				for (int j = 0; j < iXEDGE; j++)
 				{
-					if (m_ggiPrint[i][j] >= SNAKE && !(m_cDouble&&m_ggiPrint[i][j] >= SNAKE2))
-						m_ggiPrint[i][j]--;
-					if (m_ggiPrint[i][j] == SNAKE)
-						m_ggiPrint[i][j] = BLANK;
+					if (g_ggcPrint[i][j] >= SNAKE && !(m_cDouble&&g_ggcPrint[i][j] >= SNAKE2))
+						g_ggcPrint[i][j]--;
+					if (g_ggcPrint[i][j] == SNAKE)
+						g_ggcPrint[i][j] = BLANK;
 				}
 		}
-		m_ggiPrint[m_Snake.Get_Y()][m_Snake.Get_X()] = m_iLength + SNAKE;
+		g_ggcPrint[m_Snake.Get_Y()][m_Snake.Get_X()] = m_iLength + SNAKE;
 	}
 	else
 	{
@@ -502,7 +469,7 @@ bool CRetroSnake::SafeCheck(CPosition&P)
 	}
 	else
 		P.Safetify();
-	if (m_ggiPrint[P.Get_Y()][P.Get_X()] > SNAKE + 1 && !(m_cDouble&&m_ggiPrint[P.Get_Y()][P.Get_X()] == SNAKE2 + 1))
+	if (g_ggcPrint[P.Get_Y()][P.Get_X()] > SNAKE + 1 && !(m_cDouble&&g_ggcPrint[P.Get_Y()][P.Get_X()] == SNAKE2 + 1))
 		return false;
 	return true;
 }
@@ -513,17 +480,17 @@ void CRetroSnake::Initialize()
 	m_bOver = false;
 	m_bChangeFlag = false;
 	m_bPause = false;
-	memset(m_ggiPrint, BLANK, sizeof(m_ggiPrint));
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrintSave));
+	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrintSave));
 	m_Direction = NOOPERATION;
 	m_Direction2 = NOOPERATION;
 	m_iLength = 4;
 	m_iLength2 = m_cDouble ? 4 : 0;
 	for (int i = 0; i < m_iLength; i++)
 	{
-		m_ggiPrint[1 + i][iXEDGE / 2] = i + SNAKE + 1;
+		g_ggcPrint[1 + i][iXEDGE / 2] = i + SNAKE + 1;
 		if (m_cDouble)
-			m_ggiPrint[iYEDGE - i - 2][iXEDGE / 2] = i + SNAKE2 + 1;
+			g_ggcPrint[iYEDGE - i - 2][iXEDGE / 2] = i + SNAKE2 + 1;
 	}
 	m_Snake = CPosition(iXEDGE / 2, m_iLength);
 	m_Snake2 = CPosition(iXEDGE / 2, iYEDGE - m_iLength - 1);
@@ -541,7 +508,7 @@ void CRetroSnake::AddFood()
 	int i = 0, j = 0;
 	while (true)
 	{
-		if (m_ggiPrint[j][i] == BLANK)
+		if (g_ggcPrint[j][i] == BLANK)
 		{
 			t--;
 			if (!t)
@@ -560,7 +527,7 @@ void CRetroSnake::AddFood()
 
 void CRetroSnake::Refresh()
 {
-	m_ggiPrint[m_Food.Get_Y()][m_Food.Get_X()] = FOOD;
-	Print(DRETROSNAKE, m_ggiPrint, m_ggiPrintSave);
-	memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+	g_ggcPrint[m_Food.Get_Y()][m_Food.Get_X()] = FOOD;
+	Print(DRETROSNAKE, g_ggcPrint, g_ggcPrintSave);
+	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }

@@ -1,10 +1,8 @@
-#ifndef ARDUINO
 #pragma once
 #include"Position.h"
 #include"State.h"
 #include"Compatible.h"
-#include"music.h"
-#endif
+
 
 class CPlayer;
 enum RetroSnakeOptions

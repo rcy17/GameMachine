@@ -1,12 +1,12 @@
-#ifndef ARDUINO
+
 #include"PlayerOwnedGames.h"
 #include"Player.h"
 #include"Compatible.h"
-#endif
 
 
 
-#ifdef WINDOWS_SYSTEM
+
+#ifdef WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -26,11 +26,11 @@ enum blocklabel
 };
 
 //here saved all 19 shape states
-CP_GLOBALSTATE unsigned char sg_gcShapeAll[39] = { 0x10,0x54,  0x40,0x98,  0x12,0x40,  0x10,0x95,  0x62,0x45,
+const unsigned char sg_gcShapeAll[39] = { 0x10,0x54,  0x40,0x98,  0x12,0x40,  0x10,0x95,  0x62,0x45,
 0x51,0x89,  0x40,0x65,  0x01,0x84,  0x10,0x62,  0x10,0x65,  0x51,0x84,  0x12,0x45,
 0x40,0x95,  0x10,0x52,  0x51,0x94,  0x41,0x65,  0x40,0x85,  0x62,0xea,  0x10,0x32,  0x00 };
 
-CP_GLOBALSTATE int sg_giFreshTime[5] = { 800,600,400,200,100 };
+const short int sg_giFreshTime[5] = { 800,600,400,200,100 };
 
 
 CTetris* CTetris::Instance()
@@ -47,18 +47,16 @@ CTetris::CTetris()
 
 void CTetris::Enter(CPlayer*player)
 {
-	memset(m_ggiPrint, BLANK, sizeof(m_ggiPrint));
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrintSave));
+	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrintSave));
 	m_bOver = false;
 	m_bStart = false;
 	m_bChangeFlag = false;
 	m_cSpeed = 0;
 	CLS;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 	cout << "    Speed\n        ";
 	cout << (int)m_cSpeed;
-#else
-	print_speed(m_cSpeed);
 #endif
 }
 
@@ -85,31 +83,31 @@ void CTetris::Execute(CPlayer*player)
 				break;
 			case BACK:
 			case RESET:
-				player->ChangeState(TETRIS);
+				player->ChangeState(CTetris::Instance());
 				return;
 			case RESTART:
 				Initialize();
 				return;
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
 				break;
 			default:
 				return;
 			}
 		}
 		auto start = CP_CLOCK;
-		auto finish = start + CP_GLOBAL(sg_giFreshTime[m_cSpeed]);
+		auto finish = start + sg_giFreshTime[m_cSpeed];
 
 		if (m_bOver)
 		{
 			switch (PressKey())
 			{
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
 				return;
 			case RESET:
 			case BACK:
-				player->ChangeState(TETRIS);
+				player->ChangeState(CTetris::Instance());
 				return;
 			case RESTART:
 				Initialize();
@@ -122,17 +120,17 @@ void CTetris::Execute(CPlayer*player)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				char s = GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNow, i);
+				char s = GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, i);
 				CPosition p = CPosition(s / 4, s % 4) + m_Shape;
-				if (m_ggiPrint[p.Get_Y()][p.Get_X()] == BLOCK)
+				if (g_ggcPrint[p.Get_Y()][p.Get_X()] == BLOCK)
 				{
 					m_bOver = true;
 					return;
 				}
-				m_ggiPrint[p.Get_Y()][p.Get_X()] = BLOCK;
+				g_ggcPrint[p.Get_Y()][p.Get_X()] = BLOCK;
 			}
-			Print(TETRIS, m_ggiPrint, m_ggiPrintSave);
-			memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+			Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+			memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 			m_bNewBlock = false;
 			//m_bStay = true;
 		}
@@ -152,8 +150,8 @@ void CTetris::Execute(CPlayer*player)
 			case UP:
 				if (SafeMove(tem))
 				{
-					Print(TETRIS, m_ggiPrint, m_ggiPrintSave);
-					memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+					Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+					memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 					CP_SLEEP(20);
 				}
 				break;
@@ -161,9 +159,9 @@ void CTetris::Execute(CPlayer*player)
 			case DOWN2:
 				if (SafeMove(tem))
 				{
-					Print(TETRIS, m_ggiPrint, m_ggiPrintSave);
-					memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
-					CP_SLEEP(CP_GLOBAL(sg_giFreshTime[4]));
+					Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+					memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
+					CP_SLEEP(sg_giFreshTime[4]);
 				}
 				return;
 			case PAUSE:
@@ -173,11 +171,11 @@ void CTetris::Execute(CPlayer*player)
 				while (SafeMove(DOWN));
 				break;
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
 				return;
 			case RESET:
 			case BACK:
-				player->ChangeState(TETRIS);
+				player->ChangeState(CTetris::Instance());
 				return;
 			case RESTART:
 				Initialize();
@@ -230,7 +228,7 @@ void CTetris::Execute(CPlayer*player)
 			case CANCEL:
 			case BACK:
 			case EXIT:
-				player->ChangeState(NONE);
+				player->ChangeState(CMain::Instance());
 				return;
 			case OK:
 			case START:
@@ -244,11 +242,9 @@ void CTetris::Execute(CPlayer*player)
 		if (m_bChangeFlag)
 		{
 			CLS;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 			cout << "    Speed\n        ";
 			cout << (int)m_cSpeed;
-#else
-			print_speed(m_cSpeed);
 #endif
 			m_bChangeFlag = false;
 	}
@@ -268,7 +264,7 @@ void CTetris::Initialize()
 {
 	CLS;
 	m_iScore = 0;
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 	HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coord = { 12,18 };
 	SetConsoleCursorPosition(hout, coord);
@@ -277,26 +273,24 @@ void CTetris::Initialize()
 	coord.Y = 19;
 	SetConsoleCursorPosition(hout, coord);
 	cout << 0;
-#else
-	print_score(m_iScore);
 #endif
-	memset(m_ggiPrint, BLANK, sizeof(m_ggiPrint));
-	memset(m_ggiPrintSave, BLANK, sizeof(m_ggiPrintSave));
+	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
+	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrintSave));
 	for (char i = 0; i <= m_iXEdge; i++)
 	{
-		m_ggiPrint[m_iYEdge][i] = EDGE;
+		g_ggcPrint[m_iYEdge][i] = EDGE;
 	}
 	for (char i = 0; i <= m_iXEdge; i++)
 	{
-		m_ggiPrint[0][i] = EDGE;
+		g_ggcPrint[0][i] = EDGE;
 	}
 	for (char i = 0; i < m_iYEdge; i++)
 	{
-		m_ggiPrint[i][m_iXEdge] = EDGE;
+		g_ggcPrint[i][m_iXEdge] = EDGE;
 	}
 	for (char i = 0; i < m_iYEdge; i++)
 	{
-		m_ggiPrint[i][0] = EDGE;
+		g_ggcPrint[i][0] = EDGE;
 	}
 	//m_bStay = false;
 	m_bChangeFlag = false;
@@ -319,7 +313,7 @@ void CTetris::Clear()
 	{
 		bool flag = true;
 		for (char j = 1; j < m_iYEdge; j++)
-			if (m_ggiPrint[j][i] != BLOCK)
+			if (g_ggcPrint[j][i] != BLOCK)
 			{
 				flag = false;
 				break;
@@ -338,27 +332,25 @@ void CTetris::Clear()
 		for (char i = Label; i < Label + count; i++)
 		{
 			for (char j = 1; j < m_iYEdge; j++)
-				m_ggiPrint[j][i] = BLANK;
+				g_ggcPrint[j][i] = BLANK;
 			m_iScore += i - Label + 1;
 		}
-#ifdef WINDOWS_SYSTEM
+#ifdef WIN32
 		HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
 		COORD coord = { 13,19 };
 		SetConsoleCursorPosition(hout, coord);
 		cout << m_iScore;
-#else
-		print_score(m_iScore);
 #endif
-		Print(TETRIS, m_ggiPrint, m_ggiPrintSave);
-		memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+		Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+		memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 
 		CP_SLEEP(20);
 		for (char i = Label + count - 1; i >= count + 1; i--)
 			for (char j = 1; j < m_iYEdge; j++)
-				m_ggiPrint[j][i] = m_ggiPrint[j][i - count];
+				g_ggcPrint[j][i] = g_ggcPrint[j][i - count];
 		for (char i = count; i >= 1; i--)
 			for (char j = 1; j < m_iYEdge; j++)
-				m_ggiPrint[j][i] = BLANK;
+				g_ggcPrint[j][i] = BLANK;
 		if (m_cSpeed < 4 && m_iScore >= 100 * (m_cSpeed + 1))
 			m_cSpeed++;
 		CP_SLEEP(20);
@@ -376,24 +368,24 @@ void CTetris::Refresh()
 		m_Shape = CPosition(1, m_iYEdge / 2 - 1);
 		for (char i = 12; i < 16; i++)
 			for (char j = 3; j < 7; j++)
-				m_ggiPrint[i][j] = BLANK;
+				g_ggcPrint[i][j] = BLANK;
 		for (int i = 0; i < 4; i++)
 		{
-			char tem = GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNext, i);
-			m_ggiPrint[12 + tem % 4][3 + tem / 4] = BLOCK;
+			char tem = GetLocation(sg_gcShapeAll + 2 * m_cShapeNext, i);
+			g_ggcPrint[12 + tem % 4][3 + tem / 4] = BLOCK;
 		}
 	}
-	Print(TETRIS, m_ggiPrint, m_ggiPrintSave);
-	memcpy(m_ggiPrintSave, m_ggiPrint, sizeof(m_ggiPrint));
+	Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }
 
 bool CTetris::SafeMove(const keyin&key)
 {
 
-	unsigned char s[4] = { GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNow, 0) ,
-		GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNow,1) ,
-		GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNow,2) ,
-		GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * m_cShapeNow,3) };
+	unsigned char s[4] = { GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, 0) ,
+		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,1) ,
+		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,2) ,
+		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,3) };
 	unsigned char tem_x = m_Shape.Get_X(), tem_y = m_Shape.Get_Y(), tem_rotate = 0;
 	CPosition Judge[4] = { CPosition(s[0] / 4 + tem_x,s[0] % 4 + tem_y),CPosition(s[1] / 4 + tem_x,s[1] % 4 + tem_y) ,
 		CPosition(s[2] / 4 + tem_x,s[2] % 4 + tem_y),CPosition(s[3] / 4 + tem_x,s[3] % 4 + tem_y) };
@@ -460,7 +452,7 @@ bool CTetris::SafeMove(const keyin&key)
 		}
 		for (int i = 0; i < 4; i++)
 		{
-			s[i] = GetLocation(CP_GLOBAL(sg_gcShapeAll) + 2 * tem_rotate, i);
+			s[i] = GetLocation(sg_gcShapeAll + 2 * tem_rotate, i);
 			p[i] = CPosition(s[i] / 4 + tem_x, s[i] % 4 + tem_y);
 			if (!p[i].SafeCheck(m_iXEdge, m_iYEdge, 1, 1))
 				return false;
@@ -471,18 +463,18 @@ bool CTetris::SafeMove(const keyin&key)
 	}
 	for (char i = 0; i < 4; i++)
 	{
-		m_ggiPrint[Judge[i].Get_Y()][Judge[i].Get_X()] = BLANK;
+		g_ggcPrint[Judge[i].Get_Y()][Judge[i].Get_X()] = BLANK;
 
 	}
 	for (char i = 0; i < 4; i++)
 	{
-		m_ggiPrint[p[i].Get_Y()][p[i].Get_X()] += BLOCK;
+		g_ggcPrint[p[i].Get_Y()][p[i].Get_X()] += BLOCK;
 
 	}
 	bool flag = true;
 	for (char i = 0; i < 4; i++)
 	{
-		if (m_ggiPrint[p[i].Get_Y()][p[i].Get_X()] != BLOCK)
+		if (g_ggcPrint[p[i].Get_Y()][p[i].Get_X()] != BLOCK)
 		{
 			flag = false;
 			break;
@@ -492,8 +484,8 @@ bool CTetris::SafeMove(const keyin&key)
 	{
 		for (char i = 0; i < 4; i++)
 		{
-			m_ggiPrint[p[i].Get_Y()][p[i].Get_X()] -= BLOCK;
-			m_ggiPrint[Judge[i].Get_Y()][Judge[i].Get_X()] = BLOCK;
+			g_ggcPrint[p[i].Get_Y()][p[i].Get_X()] -= BLOCK;
+			g_ggcPrint[Judge[i].Get_Y()][Judge[i].Get_X()] = BLOCK;
 		}
 		return false;
 	}
