@@ -1,7 +1,6 @@
 
 #include"PlayerOwnedGames.h"
 #include"Player.h"
-#include"Compatible.h"
 
 
 
@@ -321,7 +320,7 @@ void CSokoban::Execute(CPlayer*player)
 
 
 
-	Print(SOKOBAN, g_ggcPrint, g_ggcPrintSave);
+	Print(SOKOBAN);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 
 	if (win())
@@ -339,6 +338,8 @@ void CSokoban::Exit(CPlayer*player)
 {
 
 }
+
+//judge if the player wins
 bool CSokoban::win()
 {
 	for (int i = 0; i < 16; i++)
@@ -354,6 +355,7 @@ bool CSokoban::win()
 	return 1;
 }
 
+//read the new map from the file
 void CSokoban::SetMap(unsigned char& level)
 {
 	CP_SLEEP(200);
@@ -392,11 +394,12 @@ void CSokoban::SetMap(unsigned char& level)
 	}
 	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrint));
 	memcpy(g_ggcPrint, sg_cMap[level], sizeof(g_ggcPrint));
-	Print(SOKOBAN, g_ggcPrint, g_ggcPrintSave);
+	Print(SOKOBAN);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 	CP_SLEEP(100);
 }
 
+//called when the player try to move
 void CSokoban::Move(keyin &dir)
 {
 	person.Move(dir, next);

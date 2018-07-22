@@ -1,7 +1,6 @@
 
 #include"PlayerOwnedGames.h"
 #include"Player.h"
-#include"Compatible.h"
 
 
 
@@ -25,11 +24,14 @@ enum blocklabel
 
 };
 
+//here are some assignments for const variables
+
 //here saved all 19 shape states
 const unsigned char sg_gcShapeAll[39] = { 0x10,0x54,  0x40,0x98,  0x12,0x40,  0x10,0x95,  0x62,0x45,
 0x51,0x89,  0x40,0x65,  0x01,0x84,  0x10,0x62,  0x10,0x65,  0x51,0x84,  0x12,0x45,
 0x40,0x95,  0x10,0x52,  0x51,0x94,  0x41,0x65,  0x40,0x85,  0x62,0xea,  0x10,0x32,  0x00 };
 
+//here saved freshtimes for defferent speed
 const short int sg_giFreshTime[5] = { 800,600,400,200,100 };
 
 
@@ -120,7 +122,7 @@ void CTetris::Execute(CPlayer*player)
 		{
 			for (int i = 0; i < 4; i++)
 			{
-				char s = GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, i);
+				unsigned char s = GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, i);
 				CPosition p = CPosition(s / 4, s % 4) + m_Shape;
 				if (g_ggcPrint[p.Get_Y()][p.Get_X()] == BLOCK)
 				{
@@ -129,7 +131,7 @@ void CTetris::Execute(CPlayer*player)
 				}
 				g_ggcPrint[p.Get_Y()][p.Get_X()] = BLOCK;
 			}
-			Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+			Print(TETRIS);
 			memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 			m_bNewBlock = false;
 			//m_bStay = true;
@@ -150,7 +152,7 @@ void CTetris::Execute(CPlayer*player)
 			case UP:
 				if (SafeMove(tem))
 				{
-					Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+					Print(TETRIS);
 					memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 					CP_SLEEP(20);
 				}
@@ -159,7 +161,7 @@ void CTetris::Execute(CPlayer*player)
 			case DOWN2:
 				if (SafeMove(tem))
 				{
-					Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+					Print(TETRIS);
 					memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 					CP_SLEEP(sg_giFreshTime[4]);
 				}
@@ -247,12 +249,12 @@ void CTetris::Execute(CPlayer*player)
 			cout << (int)m_cSpeed;
 #endif
 			m_bChangeFlag = false;
-	}
+		}
 		int RefreshTime = finish - CP_CLOCK;
 		if (RefreshTime < 1)
 			RefreshTime = 1;
 		CP_SLEEP(RefreshTime);
-}
+	}
 }
 
 void CTetris::Exit(CPlayer*player)
@@ -260,6 +262,7 @@ void CTetris::Exit(CPlayer*player)
 
 }
 
+//initialize the game
 void CTetris::Initialize()
 {
 	CLS;
@@ -304,6 +307,7 @@ void CTetris::Initialize()
 
 }
 
+//clear the row when it's full
 void CTetris::Clear()
 {
 	char x = m_Shape.Get_X();
@@ -341,7 +345,7 @@ void CTetris::Clear()
 		SetConsoleCursorPosition(hout, coord);
 		cout << m_iScore;
 #endif
-		Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+		Print(TETRIS);
 		memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 
 		CP_SLEEP(20);
@@ -354,10 +358,11 @@ void CTetris::Clear()
 		if (m_cSpeed < 4 && m_iScore >= 100 * (m_cSpeed + 1))
 			m_cSpeed++;
 		CP_SLEEP(20);
-		}
-
 	}
 
+}
+
+//refresh the screen every frame
 void CTetris::Refresh()
 {
 	if (m_bNewBlock)
@@ -371,21 +376,22 @@ void CTetris::Refresh()
 				g_ggcPrint[i][j] = BLANK;
 		for (int i = 0; i < 4; i++)
 		{
-			char tem = GetLocation(sg_gcShapeAll + 2 * m_cShapeNext, i);
+			unsigned char tem = GetLocation(sg_gcShapeAll + 2 * m_cShapeNext, i);
 			g_ggcPrint[12 + tem % 4][3 + tem / 4] = BLOCK;
 		}
 	}
-	Print(TETRIS, g_ggcPrint, g_ggcPrintSave);
+	Print(TETRIS);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }
 
+//try to move the block, return true if move successfully 
 bool CTetris::SafeMove(const keyin&key)
 {
 
 	unsigned char s[4] = { GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, 0) ,
-		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,1) ,
-		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,2) ,
-		GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,3) };
+						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,1) ,
+						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,2) ,
+						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,3) };
 	unsigned char tem_x = m_Shape.Get_X(), tem_y = m_Shape.Get_Y(), tem_rotate = 0;
 	CPosition Judge[4] = { CPosition(s[0] / 4 + tem_x,s[0] % 4 + tem_y),CPosition(s[1] / 4 + tem_x,s[1] % 4 + tem_y) ,
 		CPosition(s[2] / 4 + tem_x,s[2] % 4 + tem_y),CPosition(s[3] / 4 + tem_x,s[3] % 4 + tem_y) };
@@ -495,9 +501,10 @@ bool CTetris::SafeMove(const keyin&key)
 	return true;
 }
 
-char CTetris::GetLocation(const unsigned char*s, const char&Count)
+//get the position number of a block by its storage value
+unsigned char CTetris::GetLocation(const unsigned char*s, const char&Count)
 {
-	char tem;
+	unsigned char tem;
 	switch (Count)
 	{
 	case 0:

@@ -1,8 +1,6 @@
 
 #include"PlayerOwnedGames.h"
-#include"State.h"
 #include"Player.h"
-#include"Compatible.h"
 
 
 
@@ -28,7 +26,6 @@ void CGobang::Enter(CPlayer*player)
 	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
 	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrintSave));
 	m_bOver = false;
-	m_bWin = false;
 	m_bWhiteGo = false;
 	//m_iTurn = 0;
 	m_HighLight = CPosition(iXEDGE / 2, iYEDGE / 2);
@@ -123,6 +120,7 @@ CGobang::CGobang()
 
 }
 
+//check if this position can put a chess
 bool CGobang::GoCheck()
 {
 	m_HighLight.Safetify();
@@ -131,6 +129,7 @@ bool CGobang::GoCheck()
 
 }
 
+//judge if the game is over
 void CGobang::JudgeOver()
 {
 	item Now = GetItem();
@@ -140,7 +139,6 @@ void CGobang::JudgeOver()
 	if (CountChess(Now, UP, DOWN) >= 5 || CountChess(Now, RIGHT, LEFT) >= 5 ||
 		CountChess(Now, RIGHTUP, LEFTDOWN) >= 5 || CountChess(Now, LEFTUP, RIGHTDOWN) >= 5)
 	{
-		m_bWin = true;
 		m_bOver = true;
 		return;
 	}
@@ -167,11 +165,13 @@ void CGobang::JudgeOver()
 		}*/
 }
 
+//get the chess which is going now
 item CGobang::GetItem()
 {
 	return m_bWhiteGo ? WHITECHESS : BLACKCHESS;
 }
 
+//count the continuous chess in a line
 int CGobang::CountChess(const item &Now, const keyin &Direction1, const keyin &Direction2)
 {
 	int Count = 0;
@@ -190,6 +190,7 @@ int CGobang::CountChess(const item &Now, const keyin &Direction1, const keyin &D
 	return Count;
 }
 
+//refresh the screen every turn
 void CGobang::Refresh()
 {
 	//memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
@@ -224,6 +225,6 @@ void CGobang::Refresh()
 			break;
 		}
 	}
-	Print(GOBANG, g_ggcPrint, g_ggcPrintSave);
+	Print(GOBANG);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }

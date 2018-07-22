@@ -1,7 +1,6 @@
 
 #include"PlayerOwnedGames.h"
 #include"Player.h"
-#include"Compatible.h"
 
 
 
@@ -12,6 +11,12 @@
 #include<iostream>
 using std::cout;
 #endif
+
+
+//here are some assignments for const variables
+
+//here are deffrent refresh periods for deffrent speeds
+const int CRetroSnake::m_giRefreshTime[5] = { 1000,500,250,125,63 };
 
 CRetroSnake* CRetroSnake::Instance()
 {
@@ -25,11 +30,6 @@ CRetroSnake::CRetroSnake()
 	m_pcRetroSnakeOptions[WALL] = &m_cWall;
 	m_pcRetroSnakeOptions[LEVELUP] = &m_cLevelup;
 	m_pcRetroSnakeOptions[DOUBLEPLAYER] = &m_cDouble;
-	m_gRefreshTime[0] = 1000;
-	m_gRefreshTime[1] = 500;
-	m_gRefreshTime[2] = 250;
-	m_gRefreshTime[3] = 125;
-	m_gRefreshTime[4] = 63;
 }
 
 void CRetroSnake::Enter(CPlayer*player)
@@ -155,6 +155,7 @@ void CRetroSnake::Exit(CPlayer*player)
 
 }
 
+//this function will check and correct the options variables
 void CRetroSnake::RetroSnakeOptionsCheck()
 {
 	if (m_cLevelup > 1) m_cLevelup = 0;
@@ -170,6 +171,7 @@ void CRetroSnake::RetroSnakeOptionsCheck()
 	if (HighLightOption < 0)  HighLightOption = RetroSnakeOptions(END_LABEL_OPTIONS - 1);
 }
 
+//called every turn after start
 void CRetroSnake::Run()
 {
 	if (m_bPause)
@@ -197,7 +199,7 @@ void CRetroSnake::Run()
 	else
 	{
 		auto start = CP_CLOCK;
-		auto finish = start + m_gRefreshTime[m_cSpeed];
+		auto finish = start + m_giRefreshTime[m_cSpeed];
 		if (!m_cDouble)
 		{
 			if (!m_bOver&&m_Direction)
@@ -379,6 +381,7 @@ void CRetroSnake::Run()
 	}
 }
 
+//move the snake, the parameter is the number of the snake
 void CRetroSnake::Move(bool snake)
 {
 
@@ -461,6 +464,8 @@ void CRetroSnake::Move(bool snake)
 	Refresh();
 }
 
+//check if the snake is in the safe erea,
+//or make it safe if there is no wall
 bool CRetroSnake::SafeCheck(CPosition&P)
 {
 	if (m_cWall && !P.SafeCheck())
@@ -474,6 +479,7 @@ bool CRetroSnake::SafeCheck(CPosition&P)
 	return true;
 }
 
+//initialize the game
 void CRetroSnake::Initialize()
 {
 	m_bWin = false;
@@ -502,6 +508,7 @@ void CRetroSnake::Initialize()
 
 }
 
+//add the food when the snake get the last one
 void CRetroSnake::AddFood()
 {
 	int t = rand() % (iXEDGE*iYEDGE - m_iLength - m_iLength2) + 1;
@@ -525,9 +532,10 @@ void CRetroSnake::AddFood()
 
 }
 
+//refresh the screen every frame
 void CRetroSnake::Refresh()
 {
 	g_ggcPrint[m_Food.Get_Y()][m_Food.Get_X()] = FOOD;
-	Print(DRETROSNAKE, g_ggcPrint, g_ggcPrintSave);
+	Print(DRETROSNAKE);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }

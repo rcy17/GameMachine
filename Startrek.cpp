@@ -1,8 +1,7 @@
 
 #include"PlayerOwnedGames.h"
-#include"State.h"
 #include"Player.h"
-#include"Compatible.h"
+
 
 
 
@@ -14,7 +13,22 @@
 using std::cout;
 #endif
 
-char CStartrek::m_cRefreshTruns[6] = { 20,18,15,12,9,6 };
+//here are some assignments for const variables
+
+//the refresh time for deferent levels
+const char CStartrek::m_cRefreshTruns[6] = { 20,18,15,12,9,6 };
+
+//the Max y-coordinate
+const char CStartrek::m_cYMax = 14;
+
+//the Min y-coordinate
+const char CStartrek::m_cYMin = 1;
+
+//the x range
+const char CStartrek::m_cXEdge = 20;
+
+//the delay time between two frame
+const char CStartrek::m_cDelay = 50;
 
 CStartrek* CStartrek::Instance()
 {
@@ -163,12 +177,10 @@ void CStartrek::Exit(CPlayer*player)
 
 CStartrek::CStartrek()
 {
-	m_cYMax = 14;
-	m_cYMin = 1;
-	m_cXEdge = 20;
-	m_cDelay = 50;
+	
 }
 
+//initialize the game
 void CStartrek::Initialize()
 {
 	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
@@ -193,6 +205,7 @@ void CStartrek::Initialize()
 	Refresh();
 }
 
+//refresh the screen every frame
 void CStartrek::Refresh()
 {
 	for (char i = m_cYMin + 1; i < m_cYMax; i++)
@@ -247,7 +260,7 @@ void CStartrek::Refresh()
 			{
 #ifdef DEBUG_STARTREK
 				g_ggcPrint[i][m_cXEdge - 2] = BLOCK;
-				Print(STARTREK, g_ggcPrint, g_ggcPrintSave);
+				Print(STARTREK);
 				memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 #endif
 				m_bOver = true;
@@ -262,7 +275,7 @@ void CStartrek::Refresh()
 	if (g_ggcPrint[m_cY + 1][m_cXEdge - 1] != EDGE)
 		g_ggcPrint[m_cY + 1][m_cXEdge - 1] = FIGHTER;
 
-	Print(STARTREK, g_ggcPrint, g_ggcPrintSave);
+	Print(STARTREK);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 	m_iCount++;
 	if (m_iCount > m_cLevel * 200 && m_cLevel < 5)

@@ -1,136 +1,36 @@
 #pragma once
+//------------------------------------------------------------------------------------
+//
+//	Name:	Compatible.h
+//
+//	Desc:	defining some grands and functions to be compatible with deferent systems
+//
+//------------------------------------------------------------------------------------
 
-//此处是借助定义宏的办法进行DEBUG
-//#define DEBUG_RETROSNAKE
-//#define DEBUG_GOBANG
-//#define DEBUG_TETRIS
-//#define DEBUG_STARTREK
+#include "Global.h"
 
-//These only work in Windows system
+
+//these including and grands only work in windows system
 #ifdef WIN32
 
 #include<iostream>
 #include<conio.h>
 #include<windows.h>
 #include<time.h>
-//They should be implimented in deferent ways in deferent systems
+//they should be implimented in deferent ways in deferent systems
 
-//Delay for a while
-#define CP_SLEEP(time)	_sleep(time)
+//delay for a while
+#define CP_SLEEP(time)	Sleep(time) 
 
-//Get the time
+//get the time
 #define CP_CLOCK		clock()
 
-//Clear the screen
+//clear the screen
 #define CLS				system("cls")
 #endif
 
-//Two global variables grids for Screen
-extern unsigned char g_ggcPrint[16][32];
-extern unsigned char g_ggcPrintSave[16][32];
-
-//Here define some const number
-#define iYEDGE  (16)
-#define iXEDGE  (32)
-#define REFRESHTIME (150)
-
-//Here give some keys involved
-enum keyin
-{
-	//no operation
-	NOOPERATION,
-	UP,		//for game pad
-	UP2,	//for joysticks
-	DOWN,	//down
-	DOWN2,
-	LEFT,	//left
-	LEFT2,
-	RIGHT,	//right
-	RIGHT2,
-	RIGHTUP,//these four direction not neccessary, only for some judge
-	RIGHTDOWN,
-	LEFTUP,
-	LEFTDOWN,
-
-	//Ensure the choice
-	OK,		
-	//Cancel present operation or withdraw
-	CANCEL,	
-	//Start or go on the game
-	START,	
-	//Pause the game
-	PAUSE,	
-	//Exit the game
-	EXIT,	
-	//Restart this round
-	RESTART,
-	//Back to the last menu or level
-	BACK,	
-	//Get to the next one
-	NEXT,
-	//Reload this game
-	RESET,	
-
-
-};
-
-enum Game_Name
-{
-	NONE,
-	RETROSNAKE,
-	GOBANG,
-	TETRIS,
-	SOKOBAN,
-	STARTREK,
-
-	//Label the end of enum
-	END_LABEL,	
-	//Just a flag to print, shouldn't be counted
-	DRETROSNAKE 
-};
-
-enum item
-{
-	//Basic blank
-	BLANK,
-
-	//These two for RetroSnake
-	FOOD,
-	SNAKE,
-
-	//These five for Gobang
-	HIGHLIGHT,
-	BLACKCHESS,
-	WHITECHESS,
-	BLACKHIGHLIGHT,
-	WHITEHIGHLIGHT,
-
-	//These two for Tetris
-	BLOCK,
-	EDGE,
-
-	//These are for Sokoban
-	PATH,
-	OBSTACLE,
-	PERSON,
-	BOX,
-	AIM,
-	EMPTY_LABEL,
-	PERSON_AIM,
-	BOX_AIM,
-
-	//These two for Startrek
-	FIGHTER,
-	BULLET,
-
-	
-	//This is the second snake
-	SNAKE2 = 129
-};
-
-
 #ifdef WIN32
-//Here decide how to print in Windows
+//here decide how to print in Windows
 inline char Dot(int n)
 {
 	char tem;
@@ -201,14 +101,14 @@ inline char Dot(int n)
 
 #endif
 
-//Here refresh the screen by the two grids
-inline void Print(int GameNow, unsigned char now[iYEDGE][iXEDGE], unsigned char past[iYEDGE][iXEDGE])
+//here refresh the screen by the two grids
+inline void Print(int GameNow)
 {
 	for (int y = 0; y < iYEDGE; y++)
 		for (int x = 0; x < iXEDGE; x++)
 		{
-			//Only refresh when needed
-			if (now[y][x] != past[y][x])
+			//only refresh when needed
+			if (g_ggcPrint[y][x] != g_ggcPrintSave[y][x])
 			{
 #ifdef  WIN32
 				static HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -229,18 +129,18 @@ inline void Print(int GameNow, unsigned char now[iYEDGE][iXEDGE], unsigned char 
 					coord.Y = y;
 				}
 				SetConsoleCursorPosition(hout, coord);
-				if (GameNow == DRETROSNAKE && now[y][x] >= SNAKE2)
+				if (GameNow == DRETROSNAKE && g_ggcPrint[y][x] >= SNAKE2)
 					putchar(Dot(SNAKE2));
-				else if ((GameNow == RETROSNAKE || GameNow == DRETROSNAKE) && now[y][x] >= SNAKE)
+				else if ((GameNow == RETROSNAKE || GameNow == DRETROSNAKE) && g_ggcPrint[y][x] >= SNAKE)
 					putchar(Dot(SNAKE));
 				else
-					putchar(Dot(now[y][x]));
+					putchar(Dot(g_ggcPrint[y][x]));
 #endif
 			}
 		}
 }
 
-//Here give the map between input and the key
+//here give the map between input and the key
 inline keyin PressKey(bool stickpermitted = true, bool stickpermitted2 = true)
 {
 	keyin KeyPressed = NOOPERATION;
@@ -326,4 +226,6 @@ inline keyin PressKey(bool stickpermitted = true, bool stickpermitted2 = true)
 #endif
 	return KeyPressed;
 }
+
+
 

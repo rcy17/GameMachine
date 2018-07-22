@@ -1,15 +1,13 @@
 
 #include"PlayerOwnedGames.h"
-#include"State.h"
 #include"Player.h"
-#include"Compatible.h"
 
 
 
 #ifdef WIN32
 #include<conio.h>
 #include<iostream>
-#pragma warning(disable:4996)
+//#pragma warning(disable:4996)
 using std::cout;
 #endif
 
