@@ -20,7 +20,7 @@ CSokoban* CSokoban::Instance()
 
 }
 
-CSokoban::CSokoban()
+CSokoban::CSokoban():m_gcMap(NULL)
 {
 
 }
@@ -28,6 +28,19 @@ CSokoban::CSokoban()
 void CSokoban::Enter(CPlayer*player)
 {
 	CLS;
+	//if the pointer points to some memory, delete it
+	if (m_gcMap)
+		delete[]m_gcMap;
+	m_gcMap = NULL;
+	m_gcMap = new unsigned char[513];
+
+	//if failed to new, turn back to main menu
+	if (!m_gcMap)
+	{
+		player->ChangeState(CMain::Instance());
+		return;
+	}
+	
 	m_cLevel = 0;
 	ReadMap(m_cLevel);
 	Refresh();
@@ -80,8 +93,8 @@ void CSokoban::Execute(CPlayer*player)
 			break;
 		case RESTART:
 		case RESET:
-			//reload this level
-			ReadMap(m_cLevel);
+			//reload this level, no need to read the file
+			ReadMap(m_cLevel,false);
 			break;
 		}
 	Refresh();
@@ -93,6 +106,9 @@ void CSokoban::Execute(CPlayer*player)
 
 void CSokoban::Exit(CPlayer*player)
 {
+	if (m_gcMap)
+		delete []m_gcMap;
+	m_gcMap = NULL;
 #ifdef _WIN32
 	//release the memery
 	m_qSave.clear();
@@ -117,7 +133,7 @@ bool CSokoban::JudgeWin()
 }
 
 //read the new map from the file
-void CSokoban::ReadMap(char& level)
+void CSokoban::ReadMap(char& level,bool Change)
 {
 	//clear the deque
 	m_qSave.clear();
@@ -136,11 +152,14 @@ void CSokoban::ReadMap(char& level)
 	MoveCursor(20, 8);
 	cout << "²½Êý:" << m_iCount;
 
-	//read the map
-	ifstream file("map.dat");
-	for (char i = 0; i <= level; i++)
-		file >> m_gcMap;
-	file.close();
+	//read the map if the map changed
+	if (Change)
+	{
+		ifstream file("map.dat");
+		for (char i = 0; i <= level; i++)
+			file >> m_gcMap;
+		file.close();
+	}
 #endif
 
 	//tanslate the map data

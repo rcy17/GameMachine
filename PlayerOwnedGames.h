@@ -295,7 +295,7 @@ private:
 	short m_iCount;
 
 	//save the current map in memory
-	unsigned char m_gcMap[512];
+	unsigned char *m_gcMap;
 
 #ifdef _WIN32
 	//a deque to withdraw
@@ -303,7 +303,7 @@ private:
 #endif
 
 	//read the new map from the file
-	void ReadMap(char& level);
+	void ReadMap(char& level,bool Change=true);
 
 	//called when the player try to move
 	void Move(const keyin &dir);
