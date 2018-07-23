@@ -12,6 +12,7 @@
 using std::cout;
 #endif
 
+/************** methods for CRetroSnake ***************************/
 
 //here are some assignments for const variables
 

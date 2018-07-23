@@ -12,6 +12,8 @@
 
 #endif
 
+/************** methods for CTetris ***************************/
+
 //label the index of shape
 enum blocklabel
 {

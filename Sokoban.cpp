@@ -12,6 +12,7 @@
 using std::cout;
 #endif
 
+/************** methods for CSokoban ***************************/
 
 CSokoban* CSokoban::Instance()
 {
@@ -48,6 +49,14 @@ void CSokoban::Enter(CPlayer*player)
 
 void CSokoban::Execute(CPlayer*player)
 {
+#ifdef DEBUG_SOKOBAN
+	static bool flag = true;
+	if (flag)
+	{
+		Enter(player);
+		flag = false;
+	}
+#endif
 	if (JudgeWin())
 	{
 		ReadMap(++m_cLevel);

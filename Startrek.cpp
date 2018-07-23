@@ -13,6 +13,8 @@
 using std::cout;
 #endif
 
+/************** methods for CStartrek ***************************/
+
 //here are some assignments for const variables
 
 //the refresh time for deferent levels

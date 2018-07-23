@@ -9,6 +9,7 @@
 using std::cout;
 #endif
 
+/************** methods for CGobang ***************************/
 
 CGobang* CGobang::Instance()
 {

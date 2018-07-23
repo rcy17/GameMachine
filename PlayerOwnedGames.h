@@ -42,10 +42,10 @@ private:
 #endif
 
 	//save the highlighted game to choose 
-	Game_Name HighLightGame;
+	Game_Name m_HighLightGame;
 
 	//save the last highlighted game to choose 
-	Game_Name HighLightGameSave;
+	Game_Name m_HighLightGameSave;
 public:
 	static CMain *Instance();
 	virtual void Enter(CPlayer* player);

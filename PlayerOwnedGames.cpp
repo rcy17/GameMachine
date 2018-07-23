@@ -15,13 +15,14 @@ unsigned char g_ggcPrint[16][32];
 unsigned char g_ggcPrintSave[16][32];
 
 /************** methods for CMain ***************************/
+
 CMain* CMain::Instance()
 {
 	static CMain instance;
 	return &instance;
 }
 
-CMain::CMain():HighLightGame(RETROSNAKE),HighLightGameSave(MAIN)
+CMain::CMain():m_HighLightGame(RETROSNAKE),m_HighLightGameSave(MAIN)
 {
 	
 }
@@ -32,15 +33,15 @@ void CMain::Enter(CPlayer*player)
 #ifdef _WIN32
 	cout << "Back to Main Menu!\n";
 #endif
-	HighLightGame = RETROSNAKE;
-	HighLightGameSave = MAIN;
+	m_HighLightGame = RETROSNAKE;
+	m_HighLightGameSave = MAIN;
 	CP_SLEEP(500);
 	m_bPrintFlag = false;
 }
 
 void CMain::Execute(CPlayer*player)
 {
-	if (HighLightGame != HighLightGameSave)
+	if (m_HighLightGame != m_HighLightGameSave)
 	{
 #ifdef _WIN32
 		//ensure the text will print only once
@@ -54,15 +55,15 @@ void CMain::Execute(CPlayer*player)
 		//should't add blank when first executing
 		else
 		{
-			MoveCursor(0, HighLightGameSave);
+			MoveCursor(0, m_HighLightGameSave);
 			cout << "  ";
 		}
 
 		//use arrow to higlight the choioce
-		MoveCursor(0, HighLightGame);
+		MoveCursor(0, m_HighLightGame);
 		cout << "¡ú";
 #endif
-		HighLightGameSave = HighLightGame;
+		m_HighLightGameSave = m_HighLightGame;
 	}
 	switch (PressKey())
 	{
@@ -70,20 +71,20 @@ void CMain::Execute(CPlayer*player)
 	case UP:
 	case LEFT2:
 	case UP2:
-		HighLightGame = Game_Name(HighLightGame - 1);
+		m_HighLightGame = Game_Name(m_HighLightGame - 1);
 		
-		if (HighLightGame <= MAIN) HighLightGame = Game_Name(int(END_LABEL) - 1);
+		if (m_HighLightGame <= MAIN) m_HighLightGame = Game_Name(int(END_LABEL) - 1);
 		break;
 	case RIGHT2:
 	case DOWN2:
 	case RIGHT:
 	case DOWN:
-		HighLightGame = Game_Name(HighLightGame + 1);
-		if (HighLightGame >= END_LABEL) HighLightGame = Game_Name(1);
+		m_HighLightGame = Game_Name(m_HighLightGame + 1);
+		if (m_HighLightGame >= END_LABEL) m_HighLightGame = Game_Name(1);
 		break;
 	case OK:
 	case START:
-		player->ChangeState(GetInstance(HighLightGame));
+		player->ChangeState(GetInstance(m_HighLightGame));
 	default:
 		//avoid high CPU occupation
 		Sleep(1);

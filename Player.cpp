@@ -2,6 +2,7 @@
 #include"Player.h"
 #include"PlayerOwnedGames.h"
 
+/************** methods for CPlayer ***************************/
 
 //one will work if respective debug-grand is defined
 #ifdef DEBUG_GOBANG
@@ -15,6 +16,9 @@ CPlayer::CPlayer() : m_Game(STARTREK),m_pCurrentState(CStartrek::Instance())
 
 #elif defined DEBUG_RETROSNAKE
 CPlayer::CPlayer() : m_Game(RETROSNAKE),m_pCurrentState(CRetroSnake::Instance())
+
+#elif defined DEBUG_SOKOBAN
+CPlayer::CPlayer() : m_Game(SOKOBAN), m_pCurrentState(CSokoban::Instance())
 
 #else
 //generally speaking, the default location is main menu
