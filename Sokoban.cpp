@@ -4,7 +4,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -93,7 +93,11 @@ void CSokoban::Execute(CPlayer*player)
 
 void CSokoban::Exit(CPlayer*player)
 {
-
+#ifdef _WIN32
+	//release the memery
+	m_qSave.clear();
+	m_qSave.shrink_to_fit();
+#endif
 }
 
 //judge if the player wins
@@ -128,7 +132,7 @@ void CSokoban::ReadMap(char& level)
 	if (level == -1)
 		level = 6;
 	CLS;
-#ifdef  WIN32
+#ifdef  _WIN32
 	MoveCursor(20, 8);
 	cout << "²½Êý:" << m_iCount;
 
@@ -197,7 +201,7 @@ void CSokoban::Move(const keyin &dir)
 		ChangeItem(m_Person, BLANK);
 		ChangeItem(next, PERSON);
 		m_Person = next;
-#ifdef WIN32
+#ifdef _WIN32
 		//clear the next memory
 		if (m_iCount != m_qSave.size())
 		{
@@ -222,7 +226,7 @@ void CSokoban::Move(const keyin &dir)
 		ChangeItem(next, PERSON);
 		ChangeItem(next2, BOX);
 		m_Person = next;
-#ifdef WIN32
+#ifdef _WIN32
 		if (m_iCount != m_qSave.size())
 		{
 			m_qSave.erase(m_qSave.begin() + m_iCount, m_qSave.end());
@@ -233,7 +237,7 @@ void CSokoban::Move(const keyin &dir)
 
 		m_iCount++;
 	}
-#ifdef WIN32
+#ifdef _WIN32
 	MoveCursor(25, 8);
 	cout.width(4);
 	cout.setf(ios_base::left);
@@ -295,7 +299,7 @@ void CSokoban::ChangeItem(CPosition &P, const item &tem)
 	}
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 //withdraw the last operation
 void CSokoban::Withdraw()
 {
@@ -320,7 +324,7 @@ void CSokoban::Withdraw()
 		ChangeItem(m_Person, BOX);
 		ChangeItem(m_Person.Move(NegativeDirection(Direction)), PERSON);
 	}
-#ifdef WIN32
+#ifdef _WIN32
 	MoveCursor(25, 8);
 	cout.width(4);
 	cout.setf(ios_base::left);
@@ -349,7 +353,7 @@ void CSokoban::Turnback()
 	}
 	ChangeItem(m_Person, BLANK);
 	ChangeItem(m_Person.Move(Direction), PERSON);
-#ifdef WIN32
+#ifdef _WIN32
 	MoveCursor(25, 8);
 	cout.width(4);
 	cout.setf(ios_base::left);

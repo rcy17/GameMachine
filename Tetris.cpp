@@ -5,7 +5,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -57,7 +57,7 @@ void CTetris::Enter(CPlayer*player)
 	m_bChangeFlag = false;
 	m_cSpeed = 0;
 	CLS;
-#ifdef WIN32
+#ifdef _WIN32
 	cout << "Speed: 0";
 #endif
 }
@@ -252,7 +252,7 @@ void CTetris::Execute(CPlayer*player)
 		//refresh the print
 		if (m_bChangeFlag)
 		{
-#ifdef WIN32
+#ifdef _WIN32
 			MoveCursor(7, 0);
 			cout << (int)m_cSpeed;
 #endif
@@ -275,7 +275,7 @@ void CTetris::Initialize()
 {
 	CLS;
 	m_iScore = 0;
-#ifdef WIN32
+#ifdef _WIN32
 	MoveCursor(12, 18);
 	cout << "Score";
 	MoveCursor(13, 19);
@@ -346,7 +346,7 @@ void CTetris::Clear()
 				g_ggcPrint[j][i] = BLANK;
 			m_iScore += i - Label + 1;
 		}
-#ifdef WIN32
+#ifdef _WIN32
 		MoveCursor(13, 19);
 		cout << m_iScore;
 #endif

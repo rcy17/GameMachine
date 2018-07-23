@@ -2,7 +2,7 @@
 #include"Player.h"
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -18,7 +18,7 @@ CGobang* CGobang::Instance()
 
 void CGobang::Enter(CPlayer*player)
 {
-#ifdef WIN32
+#ifdef _WIN32
 	//clear the stack
 	stack<CPosition>().swap(m_sChessSave);
 #endif
@@ -86,7 +86,7 @@ void CGobang::Execute(CPlayer*player)
 				//back to the main menu
 				player->ChangeState(CMain::Instance());
 				break;
-#ifdef  WIN32
+#ifdef  _WIN32
 			case CANCEL:
 				//withdraw chess
 				Withdraw();
@@ -117,7 +117,7 @@ void CGobang::Execute(CPlayer*player)
 		case EXIT:
 			player->ChangeState(CMain::Instance());
 			break;
-#ifdef WIN32
+#ifdef _WIN32
 		case CANCEL:
 			//withdraw chess and go on playing
 			Withdraw();
@@ -136,8 +136,8 @@ void CGobang::Execute(CPlayer*player)
 
 void CGobang::Exit(CPlayer*player)
 {
-#ifdef WIN32
-	//free the memory
+#ifdef _WIN32
+	//release the memory
 	stack<CPosition>().swap(m_sChessSave);
 #endif
 }
@@ -167,7 +167,7 @@ void CGobang::JudgeOver()
 	if (g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] != HIGHLIGHT) return;
 	g_ggcPrint[m_HighLight.Get_Y()][m_HighLight.Get_X()] = Now;
 	m_iBlankRest--;
-#ifdef WIN32
+#ifdef _WIN32
 	m_sChessSave.push(m_HighLight);
 #endif
 	//Judge if player wins
@@ -258,7 +258,7 @@ void CGobang::Refresh()
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 }
 
-#ifdef WIN32
+#ifdef _WIN32
 void CGobang::Withdraw()
 {
 	if (m_sChessSave.empty())

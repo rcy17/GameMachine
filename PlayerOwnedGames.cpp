@@ -4,7 +4,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #include<conio.h>
 #include<iostream>
 //#pragma warning(disable:4996)
@@ -29,7 +29,7 @@ CMain::CMain():HighLightGame(RETROSNAKE),HighLightGameSave(MAIN)
 void CMain::Enter(CPlayer*player)
 {
 	CLS;
-#ifdef WIN32
+#ifdef _WIN32
 	cout << "Back to Main Menu!\n";
 #endif
 	HighLightGame = RETROSNAKE;
@@ -42,7 +42,7 @@ void CMain::Execute(CPlayer*player)
 {
 	if (HighLightGame != HighLightGameSave)
 	{
-#ifdef WIN32
+#ifdef _WIN32
 		//ensure the text will print only once
 		if (!m_bPrintFlag)
 		{

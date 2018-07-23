@@ -6,7 +6,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -208,7 +208,7 @@ void CStartrek::Initialize()
 		g_ggcPrint[m_cYMin][i] = g_ggcPrint[m_cYMax][i] = EDGE;
 	for (int i = m_cYMin; i < m_cYMax; i++)
 		g_ggcPrint[i][0] = g_ggcPrint[i][m_cXEdge] = EDGE;
-#ifdef WIN32
+#ifdef _WIN32
 	MoveCursor((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 	cout << m_iScore;
 #endif
@@ -245,7 +245,7 @@ void CStartrek::Refresh()
 
 				//shot one block per frame
 				m_iScore++;
-#ifdef WIN32
+#ifdef _WIN32
 				MoveCursor((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 				cout << m_iScore;
 #endif

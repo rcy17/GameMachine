@@ -5,7 +5,7 @@
 
 
 
-#ifdef WIN32
+#ifdef _WIN32
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
@@ -45,7 +45,7 @@ void CRetroSnake::Enter(CPlayer*player)
 	m_cDouble = false;
 
 	CLS;
-#ifdef WIN32
+#ifdef _WIN32
 	cout << "Welcome to RestroSnake!\n";
 	system("cls");
 	cout << "       options:\n";
@@ -105,7 +105,7 @@ void CRetroSnake::Execute(CPlayer*player)
 			RetroSnakeOptionsCheck();
 			m_bChangeFlag = false;
 
-#ifdef WIN32
+#ifdef _WIN32
 			MoveCursor(15, 1);
 			cout << "  " << (int)m_cSpeed << "  ";
 			MoveCursor(15, 2);

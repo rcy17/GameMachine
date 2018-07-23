@@ -2,7 +2,7 @@
 
 CPlayer player;
 
-#ifdef WIN32
+#ifdef _WIN32
 int main()
 {
 	//get the handle of standard output

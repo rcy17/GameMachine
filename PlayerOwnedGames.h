@@ -9,7 +9,7 @@
 
 #include"Position.h"
 #include"State.h"
-#ifdef WIN32
+#ifdef _WIN32
 #include <stack>
 #include <deque>
 using namespace std;
@@ -36,7 +36,7 @@ private:
 	
 	CMain(const CMain&);
 
-#ifdef WIN32
+#ifdef _WIN32
 	//if the text has been printed, it will be true
 	bool m_bPrintFlag;
 #endif
@@ -180,7 +180,7 @@ private:
 	//the passed highlight postion
 	CPosition m_HighLightBefore;
 
-#ifdef WIN32
+#ifdef _WIN32
 	//save all going to withdraw
 	stack<CPosition>m_sChessSave;
 
@@ -297,7 +297,7 @@ private:
 	//save the current map in memory
 	unsigned char m_gcMap[512];
 
-#ifdef WIN32
+#ifdef _WIN32
 	//a deque to withdraw
 	deque<keyin> m_qSave;
 #endif
@@ -317,7 +317,7 @@ private:
 	//change the item after move
 	void ChangeItem(CPosition &P,const item&tem);
 
-#ifdef WIN32
+#ifdef _WIN32
 	//withdraw the last operation
 	void Withdraw();
 

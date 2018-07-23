@@ -11,7 +11,7 @@
 
 
 //these including and grands only work in windows system
-#ifdef WIN32
+#ifdef _WIN32
 
 #include<iostream>
 #include<conio.h>
@@ -29,7 +29,7 @@
 #define CLS				system("cls")
 #endif
 
-#ifdef WIN32
+#ifdef _WIN32
 //here decide how to print in Windows
 inline char Dot(int n)
 {
@@ -117,7 +117,7 @@ inline void Print(int GameNow)
 			//only refresh when needed
 			if (g_ggcPrint[y][x] != g_ggcPrintSave[y][x])
 			{
-#ifdef  WIN32
+#ifdef  _WIN32
 				if (GameNow == TETRIS)
 				{
 					MoveCursor(y, x);
@@ -145,7 +145,7 @@ inline void Print(int GameNow)
 inline keyin PressKey(bool stickpermitted = true, bool stickpermitted2 = true)
 {
 	keyin KeyPressed = NOOPERATION;
-#ifdef WIN32
+#ifdef _WIN32
 	unsigned char tem = '\0';
 	if (_kbhit())
 		tem = _getch();
