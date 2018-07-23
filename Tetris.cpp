@@ -131,6 +131,7 @@ void CTetris::Execute(CPlayer*player)
 		{
 			for (int i = 0; i < 4; i++)
 			{
+				//location the new shape
 				unsigned char s = GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, i);
 				CPosition p = CPosition(s / 4, s % 4) + m_Shape;
 				if (g_ggcPrint[p.Get_Y()][p.Get_X()] == BLOCK)
@@ -144,12 +145,9 @@ void CTetris::Execute(CPlayer*player)
 			memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 			m_bNewBlock = false;
 		}
-		keyin tem = NOOPERATION;
-		while (CP_CLOCK < finish && !(tem = PressKey()))
+		while (CP_CLOCK < finish)
 		{
-
-		}
-		if (tem)
+			keyin tem = PressKey();
 			switch (tem)
 			{
 			case RIGHT:
@@ -158,6 +156,9 @@ void CTetris::Execute(CPlayer*player)
 			case LEFT:
 			case UP2:
 			case UP:
+			case DOWN:
+			case DOWN2:
+				//move after player press the key
 				if (SafeMove(tem))
 				{
 					Print(TETRIS);
@@ -165,19 +166,11 @@ void CTetris::Execute(CPlayer*player)
 					CP_SLEEP(20);
 				}
 				break;
-			case DOWN:
-			case DOWN2:
-				if (SafeMove(tem))
-				{
-					Print(TETRIS);
-					memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
-					CP_SLEEP(sg_giFreshTime[4]);
-				}
-				return;
 			case PAUSE:
 				m_bPause = true;
 				return;
 			case OK:
+				//fall the shape immediately
 				while (SafeMove(DOWN));
 				break;
 			case EXIT:
@@ -192,12 +185,16 @@ void CTetris::Execute(CPlayer*player)
 				return;
 
 			}
-		if (!m_bStay && !SafeMove(DOWN))
+			//limit the operation
+			Sleep(50);
+		}
+
+		//if the shape move to the bottom, then the new shape comes
+		if (!SafeMove(DOWN))
 		{
 			Clear();
 			m_bNewBlock = true;
 		}
-		//m_bStay = false;
 		Refresh();
 
 		int SleepTime = finish - CP_CLOCK;
@@ -287,13 +284,9 @@ void CTetris::Initialize()
 	CLS;
 	m_iScore = 0;
 #ifdef WIN32
-	HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD coord = { 12,18 };
-	SetConsoleCursorPosition(hout, coord);
+	MoveCursor(12, 18);
 	cout << "Score";
-	coord.X = 13;
-	coord.Y = 19;
-	SetConsoleCursorPosition(hout, coord);
+	MoveCursor(13, 19);
 	cout << 0;
 #endif
 	memset(g_ggcPrint, BLANK, sizeof(g_ggcPrint));
@@ -314,7 +307,7 @@ void CTetris::Initialize()
 	{
 		g_ggcPrint[i][0] = EDGE;
 	}
-	//m_bStay = false;
+
 	m_bChangeFlag = false;
 	m_bStart = true;
 	m_bOver = false;
@@ -323,7 +316,6 @@ void CTetris::Initialize()
 	m_cShapeNext = rand() % 19;
 	m_Shape = CPosition(1, m_iYEdge / 2 - 1);
 	Refresh();
-
 }
 
 //clear the row when it's full
@@ -332,6 +324,8 @@ void CTetris::Clear()
 	char x = m_Shape.Get_X();
 	char count = 0;
 	char Label;
+
+	//count how man row can be clear
 	for (char i = x; i < x + 4 && i < m_iXEdge; i++)
 	{
 		bool flag = true;
@@ -350,6 +344,8 @@ void CTetris::Clear()
 		else if (count)
 			break;
 	}
+
+	//if there is any row to clear
 	if (count)
 	{
 		for (char i = Label; i < Label + count; i++)
@@ -359,15 +355,16 @@ void CTetris::Clear()
 			m_iScore += i - Label + 1;
 		}
 #ifdef WIN32
-		HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-		COORD coord = { 13,19 };
-		SetConsoleCursorPosition(hout, coord);
+		MoveCursor(13, 19);
 		cout << m_iScore;
 #endif
 		Print(TETRIS);
 		memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 
+		//let the player see the blank rows
 		CP_SLEEP(20);
+
+		//then fall the block above the blanks
 		for (char i = Label + count - 1; i >= count + 1; i--)
 			for (char j = 1; j < m_iYEdge; j++)
 				g_ggcPrint[j][i] = g_ggcPrint[j][i - count];
@@ -376,7 +373,7 @@ void CTetris::Clear()
 				g_ggcPrint[j][i] = BLANK;
 		if (m_cSpeed < 4 && m_iScore >= 100 * (m_cSpeed + 1))
 			m_cSpeed++;
-		CP_SLEEP(20);
+		CP_SLEEP(10);
 	}
 
 }
@@ -406,16 +403,25 @@ void CTetris::Refresh()
 //try to move the block, return true if move successfully 
 bool CTetris::SafeMove(const keyin&key)
 {
-
+	//get the relative position of the shape
 	unsigned char s[4] = { GetLocation(sg_gcShapeAll + 2 * m_cShapeNow, 0) ,
 						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,1) ,
 						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,2) ,
 						   GetLocation(sg_gcShapeAll + 2 * m_cShapeNow,3) };
+
+	//get the position of the leftup of the shpae
 	unsigned char tem_x = m_Shape.Get_X(), tem_y = m_Shape.Get_Y(), tem_rotate = 0;
-	CPosition Judge[4] = { CPosition(s[0] / 4 + tem_x,s[0] % 4 + tem_y),CPosition(s[1] / 4 + tem_x,s[1] % 4 + tem_y) ,
-		CPosition(s[2] / 4 + tem_x,s[2] % 4 + tem_y),CPosition(s[3] / 4 + tem_x,s[3] % 4 + tem_y) };
+
+	//get the absolute position of the shape
+	CPosition Judge[4] = { CPosition(s[0] / 4 + tem_x,s[0] % 4 + tem_y),
+		CPosition(s[1] / 4 + tem_x,s[1] % 4 + tem_y) ,
+		CPosition(s[2] / 4 + tem_x,s[2] % 4 + tem_y),
+		CPosition(s[3] / 4 + tem_x,s[3] % 4 + tem_y) };
+
 	CPosition p[4], Judgetem;
 	memcpy(p, Judge, sizeof(Judge));
+	
+	//try to move alone the direction, judeg if shape will reach the edge
 	switch (key)
 	{
 	case DOWN:
@@ -447,6 +453,7 @@ bool CTetris::SafeMove(const keyin&key)
 		break;
 	case UP:
 	case UP2:
+		//rotate the shape
 		Judgetem = m_Shape;
 		switch (m_cShapeNow)
 		{
@@ -486,6 +493,8 @@ bool CTetris::SafeMove(const keyin&key)
 	default:
 		break;
 	}
+
+	//change the position of the shape
 	for (char i = 0; i < 4; i++)
 	{
 		g_ggcPrint[Judge[i].Get_Y()][Judge[i].Get_X()] = BLANK;
@@ -497,6 +506,8 @@ bool CTetris::SafeMove(const keyin&key)
 
 	}
 	bool flag = true;
+
+	//judge if there is overlapping block
 	for (char i = 0; i < 4; i++)
 	{
 		if (g_ggcPrint[p[i].Get_Y()][p[i].Get_X()] != BLOCK)
@@ -505,6 +516,8 @@ bool CTetris::SafeMove(const keyin&key)
 			break;
 		}
 	}
+
+	//if overlapping, turn back
 	if (!flag)
 	{
 		for (char i = 0; i < 4; i++)
@@ -514,7 +527,11 @@ bool CTetris::SafeMove(const keyin&key)
 		}
 		return false;
 	}
+
+	//after move, change the position
 	m_Shape = Judgetem;
+
+	//after rotating, the shape will change
 	if (tem_rotate)
 		m_cShapeNow = tem_rotate;
 	return true;
@@ -523,6 +540,7 @@ bool CTetris::SafeMove(const keyin&key)
 //get the position number of a block by its storage value
 unsigned char CTetris::GetLocation(const unsigned char*s, const char&Count)
 {
+	//save the shape's position with least memory
 	unsigned char tem;
 	switch (Count)
 	{
