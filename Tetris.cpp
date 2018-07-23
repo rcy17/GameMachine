@@ -9,9 +9,10 @@
 #pragma warning(disable:4996)
 #include<conio.h>
 #include<iostream>
-using std::cout;
+
 #endif
 
+//label the index of shape
 enum blocklabel
 {
 	OSHAPE = 0,
@@ -54,7 +55,6 @@ void CTetris::Enter(CPlayer*player)
 	m_bOver = false;
 	m_bStart = false;
 	m_bChangeFlag = false;
-	m_bPrintFlag = true;
 	m_cSpeed = 0;
 	CLS;
 #ifdef WIN32
@@ -252,14 +252,6 @@ void CTetris::Execute(CPlayer*player)
 		//refresh the print
 		if (m_bChangeFlag)
 		{
-			if (m_bPrintFlag)
-			{
-				CLS;
-#ifdef WIN32
-				cout << "Speed:";
-#endif
-				m_bPrintFlag = false;
-			}
 #ifdef WIN32
 			MoveCursor(7, 0);
 			cout << (int)m_cSpeed;

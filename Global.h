@@ -9,7 +9,7 @@
 
 //defining some grands to debug
 //#define DEBUG_RETROSNAKE
-#define DEBUG_GOBANG
+//#define DEBUG_GOBANG
 //#define DEBUG_TETRIS
 //#define DEBUG_STARTREK
 

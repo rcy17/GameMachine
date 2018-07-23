@@ -74,7 +74,7 @@ private:
 	char m_cDouble;
 
 	//save the highlight option before start the game
-	RetroSnakeOptions HighLightOption;
+	RetroSnakeOptions m_HighLightOption;
 
 	//a array to save all the options
 	char*m_pcRetroSnakeOptions[4];
@@ -102,9 +102,6 @@ private:
 
 	//it will be true when the snake get the food
 	bool m_bGetFood;
-
-	//if the text has been printed, it will be true
-	bool m_bPrintFlag;
 
 	//the lenth of the snake
 	int m_iLength;
@@ -266,9 +263,6 @@ private:
 
 	//it will be true if the current shape reach the bottom
 	bool m_bNewBlock;
-
-	//if the text has been printed, it will be true
-	bool m_bPrintFlag;
 
 	//the x range
 	char m_iXEdge;
