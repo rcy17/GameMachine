@@ -99,6 +99,13 @@ inline char Dot(int n)
 	return tem;
 }
 
+//put the cursor to any place
+inline void CursorMoveTo(char x, char y)
+{
+	static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
+	COORD coord = { x,y };
+	SetConsoleCursorPosition(handle, coord);
+}
 #endif
 
 //here refresh the screen by the two grids
@@ -111,24 +118,18 @@ inline void Print(int GameNow)
 			if (g_ggcPrint[y][x] != g_ggcPrintSave[y][x])
 			{
 #ifdef  WIN32
-				static HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-				COORD coord;
 				if (GameNow == TETRIS)
 				{
-					coord.X = y;
-					coord.Y = x;
+					CursorMoveTo(y, x);
 				}
 				else if (GameNow == STARTREK)
 				{
-					coord.X = iYEDGE - y;
-					coord.Y = x;
+					CursorMoveTo(iYEDGE - y, x);
 				}
 				else
 				{
-					coord.X = x;
-					coord.Y = y;
+					CursorMoveTo(x, y);
 				}
-				SetConsoleCursorPosition(hout, coord);
 				if (GameNow == DRETROSNAKE && g_ggcPrint[y][x] >= SNAKE2)
 					putchar(Dot(SNAKE2));
 				else if ((GameNow == RETROSNAKE || GameNow == DRETROSNAKE) && g_ggcPrint[y][x] >= SNAKE)

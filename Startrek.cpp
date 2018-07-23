@@ -38,7 +38,6 @@ CStartrek* CStartrek::Instance()
 
 void CStartrek::Enter(CPlayer*player)
 {
-
 	CLS;
 	Initialize();
 }
@@ -49,6 +48,7 @@ void CStartrek::Execute(CPlayer*player)
 	if (!m_iCount)
 		Initialize();
 #endif
+	//if the game start then work
 	if (m_bStart)
 	{
 		if (m_bPause)
@@ -70,16 +70,23 @@ void CStartrek::Execute(CPlayer*player)
 				player->ChangeState(CMain::Instance());
 				return;
 			default:
+				//avoid high CPU occupation
+				Sleep(1);
 				return;
 			}
 		}
+
+		//calculate this frame's finish time
 		auto start = CP_CLOCK;
 		auto finish = CP_CLOCK + m_cDelay;
 		Refresh();
 		keyin tem = NOOPERATION;
-		while (!(tem = PressKey())&&CP_CLOCK < finish)
-		{
 
+		//wait until press any key or time out
+		while (!(tem = PressKey()) && CP_CLOCK < finish)
+		{
+			//avoid high CPU occupation
+			Sleep(1);
 		}
 		if (tem)
 			switch (tem)
@@ -111,7 +118,7 @@ void CStartrek::Execute(CPlayer*player)
 				return;
 			}
 
-
+		//if the time isn't time, then wait
 		int RefreshTime = finish - CP_CLOCK;
 		if (RefreshTime < 1)
 			RefreshTime = 1;
@@ -130,9 +137,13 @@ void CStartrek::Execute(CPlayer*player)
 			Enter(player);
 			return;
 		default:
+			//avoid high CPU occupation
+			Sleep(1);
 			return;
 		}
 	}
+
+	//press any key to start
 	else
 	{
 		m_bStart = true;
@@ -164,6 +175,8 @@ void CStartrek::Execute(CPlayer*player)
 			Enter(player);
 			return;
 		default:
+			//avoid high CPU occupation
+			Sleep(1);
 			m_bStart = false;
 			break;
 		}
@@ -177,7 +190,7 @@ void CStartrek::Exit(CPlayer*player)
 
 CStartrek::CStartrek()
 {
-	
+
 }
 
 //initialize the game
@@ -196,11 +209,8 @@ void CStartrek::Initialize()
 	for (int i = m_cYMin; i < m_cYMax; i++)
 		g_ggcPrint[i][0] = g_ggcPrint[i][m_cXEdge] = EDGE;
 #ifdef WIN32
-	HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-	COORD coord = { 4,26 };
-	SetConsoleCursorPosition(hout, coord);
+	CursorMoveTo((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 	cout << m_iScore;
-
 #endif
 	Refresh();
 }
@@ -208,6 +218,7 @@ void CStartrek::Initialize()
 //refresh the screen every frame
 void CStartrek::Refresh()
 {
+	//clear the bullets in last frame
 	for (char i = m_cYMin + 1; i < m_cYMax; i++)
 	{
 		if (g_ggcPrint[i][m_cXEdge - 2] == FIGHTER)
@@ -222,19 +233,20 @@ void CStartrek::Refresh()
 		}
 	}
 
-	//char m_cLabel;
+	//refresh the bullet as if it could move forward
 	if (m_bStart)
 	{
 		for (char m_cLabel = m_cXEdge - 1; m_cLabel > 0; m_cLabel--)
 		{
+			//refresh the bullet until there is a block
 			if (g_ggcPrint[m_cY][m_cLabel] == BLOCK)
 			{
 				g_ggcPrint[m_cY][m_cLabel] = BULLET;
+
+				//shot one block per frame
 				m_iScore++;
 #ifdef WIN32
-				HANDLE hout = GetStdHandle(STD_OUTPUT_HANDLE);
-				COORD coord = { 4,26 };
-				SetConsoleCursorPosition(hout, coord);
+				CursorMoveTo((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 				cout << m_iScore;
 #endif
 				break;
@@ -243,18 +255,22 @@ void CStartrek::Refresh()
 				g_ggcPrint[m_cY][m_cLabel] = BULLET;
 		}
 	}
+
+	//refresh the blocks at duing time
 	if (!(m_iCount % m_cRefreshTruns[m_cLevel]))
 	{
-
+		//fall the block
 		for (char i = m_cYMin + 1; i < m_cYMax; i++)
-			for (char j = m_cXEdge-3; j > 0; j--)
-				g_ggcPrint[i][j + 1] = g_ggcPrint[i][j];
-			//memmove((g_ggcPrint[i] + 2), (g_ggcPrint[i] + 1), sizeof(g_ggcPrint[0][0]) * (m_cXEdge - 3));
+			memmove((g_ggcPrint[i] + 2), (g_ggcPrint[i] + 1), sizeof(g_ggcPrint[0][0]) * (m_cXEdge - 3));
+
+		//create new block half of posibility
 		for (char i = m_cYMin + 1; i < m_cYMax; i++)
 			if (rand() % 2)
 				g_ggcPrint[i][1] = BLOCK;
 			else
 				g_ggcPrint[i][1] = BLANK;
+
+		//if the block go into the bottom tow rows, game over
 		for (char i = m_cYMin + 1; i < m_cYMax; i++)
 			if (g_ggcPrint[i][m_cXEdge - 2] == BLOCK)
 			{
@@ -268,6 +284,8 @@ void CStartrek::Refresh()
 				return;
 			}
 	}
+
+	//refresh the fighter
 	g_ggcPrint[m_cY][m_cXEdge - 2] = FIGHTER;
 	g_ggcPrint[m_cY][m_cXEdge - 1] = FIGHTER;
 	if (g_ggcPrint[m_cY - 1][m_cXEdge - 1] != EDGE)
@@ -278,6 +296,8 @@ void CStartrek::Refresh()
 	Print(STARTREK);
 	memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 	m_iCount++;
+	
+	//speed up after the duing time
 	if (m_iCount > m_cLevel * 200 && m_cLevel < 5)
 		m_cLevel++;
 

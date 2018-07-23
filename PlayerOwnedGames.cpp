@@ -21,6 +21,11 @@ CMain* CMain::Instance()
 	return &instance;
 }
 
+CMain::CMain():HighLightGame(RETROSNAKE),HighLightGameSave(MAIN)
+{
+	
+}
+
 void CMain::Enter(CPlayer*player)
 {
 	CLS;
@@ -28,24 +33,37 @@ void CMain::Enter(CPlayer*player)
 	cout << "Back to Main Menu!\n";
 #endif
 	HighLightGame = RETROSNAKE;
-	HighLightGameSave = NONE;
+	HighLightGameSave = MAIN;
 	CP_SLEEP(500);
+	m_bPrintFlag = false;
 }
 
 void CMain::Execute(CPlayer*player)
 {
 	if (HighLightGame != HighLightGameSave)
 	{
-
-
-		CLS;
 #ifdef WIN32
-		cout << "Choose the game:\n1.RetroSnake\n2.Gobang\n3.Tetris\n4.Sokoban\n";
-		cout << "The highlight one is:" << HighLightGame;
+		//ensure the text will print only once
+		if (!m_bPrintFlag)
+		{
+			CLS;
+			cout << "Choose the game:\n  RetroSnake\n  Gobang\n  Tetris\n  Sokoban\n  StarTrek";
+			m_bPrintFlag = true;
+		}
+
+		//should't add blank when first executing
+		else
+		{
+			CursorMoveTo(0, HighLightGameSave);
+			cout << "  ";
+		}
+
+		//use arrow to higlight the choioce
+		CursorMoveTo(0, HighLightGame);
+		cout << "¡ú";
 #endif
 		HighLightGameSave = HighLightGame;
 	}
-	
 	switch (PressKey())
 	{
 	case LEFT:
@@ -54,7 +72,7 @@ void CMain::Execute(CPlayer*player)
 	case UP2:
 		HighLightGame = Game_Name(HighLightGame - 1);
 		
-		if (HighLightGame <= NONE) HighLightGame = Game_Name(int(END_LABEL) - 1);
+		if (HighLightGame <= MAIN) HighLightGame = Game_Name(int(END_LABEL) - 1);
 		break;
 	case RIGHT2:
 	case DOWN2:
@@ -67,8 +85,11 @@ void CMain::Execute(CPlayer*player)
 	case START:
 		player->ChangeState(GetInstance(HighLightGame));
 	default:
+		//avoid high CPU occupation
+		Sleep(1);
 		break;
 	}
+	
 }
 
 void CMain::Exit(CPlayer*player)

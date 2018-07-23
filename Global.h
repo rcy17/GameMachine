@@ -9,7 +9,7 @@
 
 //defining some grands to debug
 //#define DEBUG_RETROSNAKE
-//#define DEBUG_GOBANG
+#define DEBUG_GOBANG
 //#define DEBUG_TETRIS
 //#define DEBUG_STARTREK
 
@@ -21,7 +21,7 @@ extern unsigned char g_ggcPrintSave[16][32];
 //here define some const number
 #define iYEDGE  (16)
 #define iXEDGE  (32)
-#define REFRESHTIME (150)
+#define REFRESHTIME (100)
 
 //here defining some keys involved
 enum keyin
@@ -66,7 +66,7 @@ enum keyin
 //all the games'name in this programme
 enum Game_Name
 {
-	NONE,
+	MAIN,
 	RETROSNAKE,
 	GOBANG,
 	TETRIS,
@@ -95,6 +95,7 @@ enum item
 	WHITECHESS,
 	BLACKHIGHLIGHT,
 	WHITEHIGHLIGHT,
+
 
 	//These two for Tetris
 	BLOCK,

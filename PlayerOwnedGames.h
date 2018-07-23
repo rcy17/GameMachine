@@ -9,7 +9,11 @@
 
 #include"Position.h"
 #include"State.h"
-
+#ifdef WIN32
+#include <stack>
+#include <list>
+using namespace std;
+#endif
 
 class CPlayer;
 enum RetroSnakeOptions
@@ -28,15 +32,20 @@ class CMain :public CState
 {
 private:
 
-	CMain()
-	{
-		HighLightGame = RETROSNAKE;
-		HighLightGameSave = NONE;
-	}
+	CMain();
+	
 	CMain(const CMain&);
 
-	//these two variables save the highlighted game to choose 
-	Game_Name HighLightGame, HighLightGameSave;
+#ifdef WIN32
+	//if the text has been printed, it will be true
+	bool m_bPrintFlag;
+#endif
+
+	//save the highlighted game to choose 
+	Game_Name HighLightGame;
+
+	//save the last highlighted game to choose 
+	Game_Name HighLightGameSave;
 public:
 	static CMain *Instance();
 	virtual void Enter(CPlayer* player);
@@ -163,13 +172,21 @@ private:
 	int m_iBlankRest;
 
 	//the current turns
-	//int m_iTurn;
+	int m_iTurn;
 
 	//the highlight position 
 	CPosition m_HighLight;
 
 	//the passed highlight postion
 	CPosition m_HighLightBefore;
+
+#ifdef WIN32
+	//save all going to withdraw
+	stack<CPosition>m_sChessSave;
+
+	//withdraw the last going
+	void Withdraw();
+#endif
 
 	//check if this position can put a chess
 	bool GoCheck();

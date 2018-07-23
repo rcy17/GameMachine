@@ -15,6 +15,8 @@ int main()
 	CursorInfo.bVisible = false; 
 	//give the handle the new information
 	SetConsoleCursorInfo(handle, &CursorInfo);
+
+
 	while (true)
 	{
 		player.Update();
