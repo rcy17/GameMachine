@@ -107,7 +107,6 @@ enum item
 	PERSON,
 	BOX,
 	AIM,
-	EMPTY_LABEL,
 	PERSON_AIM,
 	BOX_AIM,
 

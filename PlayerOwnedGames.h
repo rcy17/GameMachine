@@ -11,7 +11,7 @@
 #include"State.h"
 #ifdef WIN32
 #include <stack>
-#include <list>
+#include <deque>
 using namespace std;
 #endif
 
@@ -286,25 +286,47 @@ private:
 	CSokoban(const CSokoban&);
 
 	//the position of the player
-	CPosition person;
-
-	//the next position of the player if moving successfully
-	CPosition next;
-
-	//the next position of the box pushed if moving successfully
-	CPosition next2;
-
-	//read the new map from the file
-	void SetMap(unsigned char& level);
-
-	//called when the player try to move
-	void Move(keyin &dir);
-
-	//judge if the player wins
-	bool win();
+	CPosition m_Person;
 
 	//the current level
-	unsigned char level;
+	char m_cLevel;
+
+	//count the steps
+	short m_iCount;
+
+	//save the current map in memory
+	unsigned char m_gcMap[512];
+
+#ifdef WIN32
+	//a deque to withdraw
+	deque<keyin> m_qSave;
+#endif
+
+	//read the new map from the file
+	void ReadMap(char& level);
+
+	//called when the player try to move
+	void Move(const keyin &dir);
+
+	//judge if the player wins
+	bool JudgeWin();
+	
+	//refresh the print
+	void Refresh();
+
+	//change the item after move
+	void ChangeItem(CPosition &P,const item&tem);
+
+#ifdef WIN32
+	//withdraw the last operation
+	void Withdraw();
+
+	//turn back the next operation
+	void Turnback();
+
+	//find the negative direction
+	keyin NegativeDirection(const keyin &dir);
+#endif
 public:
 	static CSokoban *Instance();
 	virtual void Enter(CPlayer* player);
