@@ -209,7 +209,7 @@ void CStartrek::Initialize()
 	for (int i = m_cYMin; i < m_cYMax; i++)
 		g_ggcPrint[i][0] = g_ggcPrint[i][m_cXEdge] = EDGE;
 #ifdef WIN32
-	CursorMoveTo((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
+	MoveCursor((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 	cout << m_iScore;
 #endif
 	Refresh();
@@ -246,7 +246,7 @@ void CStartrek::Refresh()
 				//shot one block per frame
 				m_iScore++;
 #ifdef WIN32
-				CursorMoveTo((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
+				MoveCursor((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 				cout << m_iScore;
 #endif
 				break;

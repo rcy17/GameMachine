@@ -136,8 +136,10 @@ void CGobang::Execute(CPlayer*player)
 
 void CGobang::Exit(CPlayer*player)
 {
+#ifdef WIN32
 	//free the memory
 	stack<CPosition>().swap(m_sChessSave);
+#endif
 }
 
 CGobang::CGobang()

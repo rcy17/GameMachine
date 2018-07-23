@@ -100,7 +100,7 @@ inline char Dot(int n)
 }
 
 //put the cursor to any place
-inline void CursorMoveTo(char x, char y)
+inline void MoveCursor(char x, char y)
 {
 	static HANDLE handle = GetStdHandle(STD_OUTPUT_HANDLE);
 	COORD coord = { x,y };
@@ -120,15 +120,15 @@ inline void Print(int GameNow)
 #ifdef  WIN32
 				if (GameNow == TETRIS)
 				{
-					CursorMoveTo(y, x);
+					MoveCursor(y, x);
 				}
 				else if (GameNow == STARTREK)
 				{
-					CursorMoveTo(iYEDGE - y, x);
+					MoveCursor(iYEDGE - y, x);
 				}
 				else
 				{
-					CursorMoveTo(x, y);
+					MoveCursor(x, y);
 				}
 				if (GameNow == DRETROSNAKE && g_ggcPrint[y][x] >= SNAKE2)
 					putchar(Dot(SNAKE2));

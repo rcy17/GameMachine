@@ -54,12 +54,12 @@ void CMain::Execute(CPlayer*player)
 		//should't add blank when first executing
 		else
 		{
-			CursorMoveTo(0, HighLightGameSave);
+			MoveCursor(0, HighLightGameSave);
 			cout << "  ";
 		}
 
 		//use arrow to higlight the choioce
-		CursorMoveTo(0, HighLightGame);
+		MoveCursor(0, HighLightGame);
 		cout << "¡ú";
 #endif
 		HighLightGameSave = HighLightGame;

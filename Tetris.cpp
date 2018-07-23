@@ -54,11 +54,11 @@ void CTetris::Enter(CPlayer*player)
 	m_bOver = false;
 	m_bStart = false;
 	m_bChangeFlag = false;
+	m_bPrintFlag = true;
 	m_cSpeed = 0;
 	CLS;
 #ifdef WIN32
-	cout << "    Speed\n        ";
-	cout << (int)m_cSpeed;
+	cout << "Speed: 0";
 #endif
 }
 
@@ -73,8 +73,10 @@ void CTetris::Execute(CPlayer*player)
 	}
 	debugtest++;
 #endif
+	//after the game start, it works
 	if (m_bStart)
 	{
+		//if press Pause, the game pauses
 		if (m_bPause)
 		{
 			switch (PressKey())
@@ -94,12 +96,13 @@ void CTetris::Execute(CPlayer*player)
 				player->ChangeState(CMain::Instance());
 				break;
 			default:
+				//avoid high CPU occupation
+				Sleep(1);
 				return;
 			}
 		}
-		auto start = CP_CLOCK;
-		auto finish = start + sg_giFreshTime[m_cSpeed];
 
+		//when game over, can't go on
 		if (m_bOver)
 		{
 			switch (PressKey())
@@ -115,9 +118,15 @@ void CTetris::Execute(CPlayer*player)
 				Initialize();
 				return;
 			default:
+				//avoid high CPU occupation
+				Sleep(1);
 				return;
 			}
 		}
+		auto start = CP_CLOCK;
+		auto finish = start + sg_giFreshTime[m_cSpeed];
+
+		//refresh the new block
 		if (m_bNewBlock)
 		{
 			for (int i = 0; i < 4; i++)
@@ -134,7 +143,6 @@ void CTetris::Execute(CPlayer*player)
 			Print(TETRIS);
 			memcpy(g_ggcPrintSave, g_ggcPrint, sizeof(g_ggcPrint));
 			m_bNewBlock = false;
-			//m_bStay = true;
 		}
 		keyin tem = NOOPERATION;
 		while (CP_CLOCK < finish && !(tem = PressKey()))
@@ -197,6 +205,7 @@ void CTetris::Execute(CPlayer*player)
 		CP_SLEEP(SleepTime);
 
 	}
+	//option for speed
 	else
 	{
 		auto start = CP_CLOCK;
@@ -204,7 +213,8 @@ void CTetris::Execute(CPlayer*player)
 		keyin tem;
 		while (CP_CLOCK < finish && !(tem = PressKey()))
 		{
-
+			//avoid high CPU occupation
+			Sleep(1);
 		}
 		if (tem)
 		{
@@ -241,11 +251,20 @@ void CTetris::Execute(CPlayer*player)
 				break;
 			}
 		}
+
+		//refresh the print
 		if (m_bChangeFlag)
 		{
-			CLS;
+			if (m_bPrintFlag)
+			{
+				CLS;
 #ifdef WIN32
-			cout << "    Speed\n        ";
+				cout << "Speed:";
+#endif
+				m_bPrintFlag = false;
+			}
+#ifdef WIN32
+			MoveCursor(7, 0);
 			cout << (int)m_cSpeed;
 #endif
 			m_bChangeFlag = false;
