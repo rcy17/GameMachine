@@ -168,41 +168,51 @@ void CSokoban::ReadMap(char& level,bool Change)
 		for (char i = 0; i <= level; i++)
 			file >> m_gcMap;
 		file.close();
+		//tanslate the map data
+		for (short i = 0; i < 512; i++)
+		{
+			switch (m_gcMap[i])
+			{
+			case '0':
+				m_gcMap[i] = BLANK;
+				break;
+			case '1':
+				m_gcMap[i] = PATH;
+				break;
+			case '2':
+				m_gcMap[i] = OBSTACLE;
+				break;
+			case '3':
+				m_gcMap[i] = PERSON;
+				m_Person = CPosition(i % 32, i / 32);
+				break;
+			case '4':
+				m_gcMap[i] = BOX;
+				break;
+			case '5':
+				m_gcMap[i] = AIM;
+				break;
+			case '6':
+				m_gcMap[i] = BOX_AIM;
+				break;
+			case '7':
+				m_gcMap[i] = PERSON_AIM;
+				break;
+			}
+		}
+	}
+	else 
+		for (short i = 0; i < 512; i++)
+	{
+			if (m_gcMap[i] == PERSON)
+			{
+				m_Person = CPosition(i % 32, i / 32);
+				break;
+			}
 	}
 #endif
 
-	//tanslate the map data
-	for (short i = 0; i < 512; i++)
-	{
-		switch (m_gcMap[i])
-		{
-		case '0':
-			m_gcMap[i] = BLANK;
-			break;
-		case '1':
-			m_gcMap[i] = PATH;
-			break;
-		case '2':
-			m_gcMap[i] = OBSTACLE;
-			break;
-		case '3':
-			m_gcMap[i] = PERSON;
-			m_Person = CPosition(i % 32, i / 32);
-			break;
-		case '4':
-			m_gcMap[i] = BOX;
-			break;
-		case '5':
-			m_gcMap[i] = AIM;
-			break;
-		case '6':
-			m_gcMap[i] = BOX_AIM;
-			break;
-		case '7':
-			m_gcMap[i] = PERSON_AIM;
-			break;
-		}
-	}
+	
 
 	//copy the map to the print
 	memset(g_ggcPrintSave, BLANK, sizeof(g_ggcPrint));

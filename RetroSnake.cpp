@@ -77,7 +77,10 @@ void CRetroSnake::Execute(CPlayer*player)
 
 	//exit the game
 	if (m_bExit)
+	{
 		player->ChangeState(CMain::Instance());
+		return;
+	}
 	if (m_bStart)
 	{
 		//initialize at the first frame after start
@@ -208,7 +211,7 @@ void CRetroSnake::Run()
 			return;
 		case EXIT:
 			m_bExit = true;
-			break;
+			return;
 		default:
 			//avoid high CPU occupation
 			Sleep(1);

@@ -211,6 +211,8 @@ void CStartrek::Initialize()
 	for (int i = m_cYMin; i < m_cYMax; i++)
 		g_ggcPrint[i][0] = g_ggcPrint[i][m_cXEdge] = EDGE;
 #ifdef _WIN32
+	MoveCursor((m_cYMax + m_cYMin) / 2, m_cXEdge + 2);
+	cout << "Score";
 	MoveCursor((m_cYMax + m_cYMin) / 2 + 1, m_cXEdge + 3);
 	cout << m_iScore;
 #endif
